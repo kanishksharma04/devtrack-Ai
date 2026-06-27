@@ -55,7 +55,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       {
         id: 101,
         name: "nextjs-saas-template",
-        fullName: "demo-developer/nextjs-saas-template",
+        fullName: "vercel/next.js",
         description: "A production-ready Next.js SaaS starter kit with Auth, Database, and Stripe integration.",
         stars: 342,
         forks: 58,
@@ -69,7 +69,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       {
         id: 102,
         name: "ai-copilot-agent",
-        fullName: "demo-developer/ai-copilot-agent",
+        fullName: "google/gemini-cookbook",
         description: "Autonomous coding agent powered by Gemini 1.5 Pro and Next.js.",
         stars: 1205,
         forks: 184,
@@ -83,7 +83,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       {
         id: 103,
         name: "rust-query-builder",
-        fullName: "demo-developer/rust-query-builder",
+        fullName: "diesel-rs/diesel",
         description: "A blazing fast, type-safe SQL query builder written in Rust.",
         stars: 489,
         forks: 32,
@@ -97,7 +97,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       {
         id: 104,
         name: "react-native-chat-app",
-        fullName: "demo-developer/react-native-chat-app",
+        fullName: "facebook/react-native",
         description: "Real-time encrypted chat application using React Native and WebSockets.",
         stars: 154,
         forks: 22,
