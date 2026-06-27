@@ -19,21 +19,47 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
-      if (!account || !user.email) return false;
+      if (!account) return false;
 
       try {
-        const dbUser = await prisma.user.upsert({
-          where: { email: user.email },
-          update: {
-            name: user.name,
-            image: user.image,
+        const existingAccount = await prisma.account.findUnique({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
           },
-          create: {
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          },
+          include: { user: true },
         });
+
+        let dbUser;
+        if (existingAccount) {
+          dbUser = existingAccount.user;
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: {
+              name: user.name || dbUser.name,
+              image: user.image || dbUser.image,
+              email: user.email || dbUser.email,
+            },
+          });
+        } else {
+          if (user.email) {
+            dbUser = await prisma.user.findUnique({
+              where: { email: user.email },
+            });
+          }
+
+          if (!dbUser) {
+            dbUser = await prisma.user.create({
+              data: {
+                email: user.email || null,
+                name: user.name,
+                image: user.image,
+              },
+            });
+          }
+        }
 
         await prisma.account.upsert({
           where: {
@@ -69,11 +95,16 @@ export const authOptions: AuthOptions = {
     },
     async jwt({ token, account, user }) {
       if (account && user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email! },
+        const dbAccount = await prisma.account.findUnique({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
         });
-        if (dbUser) {
-          token.userId = dbUser.id;
+        if (dbAccount) {
+          token.userId = dbAccount.userId;
           token.accessToken = account.access_token;
         }
       }
