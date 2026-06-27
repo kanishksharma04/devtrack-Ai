@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -12,18 +13,18 @@ export function Navbar() {
 
   const handleSync = async () => {
     setSyncing(true);
+    const toastId = toast.loading("Syncing GitHub data...");
     try {
       const res = await fetch("/api/sync", { method: "POST" });
       const data = await res.json();
       if (res.ok && data.success) {
-        alert("GitHub account data successfully synchronized!");
+        toast.success("GitHub data synced successfully!", { id: toastId });
         window.location.reload();
       } else {
-        alert(data.error || "Failed to sync data.");
+        toast.error(data.error || "Failed to sync data.", { id: toastId });
       }
-    } catch (err) {
-      console.error(err);
-      alert("An unexpected error occurred during sync.");
+    } catch {
+      toast.error("An unexpected error occurred during sync.", { id: toastId });
     } finally {
       setSyncing(false);
     }

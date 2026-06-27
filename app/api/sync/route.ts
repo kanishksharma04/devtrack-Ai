@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { syncGitHubData } from "@/lib/services/github";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST() {
   try {
@@ -15,8 +16,16 @@ export async function POST() {
     }
 
     const userId = (session.user as any).id;
-    const accessToken = (session as any).accessToken;
 
+    const { success, retryAfter } = rateLimit(`sync:${userId}`, 5, 10 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: `Too many sync requests. Please wait ${retryAfter}s before retrying.` },
+        { status: 429 }
+      );
+    }
+
+    const accessToken = (session as any).accessToken;
     const result = await syncGitHubData(userId, accessToken);
 
     return NextResponse.json({

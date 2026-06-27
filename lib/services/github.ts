@@ -250,6 +250,12 @@ export async function syncGitHubData(userId: string, accessToken: string) {
   const ghUser = await fetchGitHubUser(accessToken);
   const username = ghUser.login;
 
+  // Store the GitHub username in the user record
+  await prisma.user.update({
+    where: { id: userId },
+    data: { githubUsername: username },
+  });
+
   // Fetch repositories of authenticated user sorted by last pushed
   const reposRes = await fetch(
     "https://api.github.com/user/repos?type=owner&sort=pushed&per_page=50",
@@ -283,8 +289,8 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     commitsPerMonth[monthKey] = 0;
   }
 
-  // Sync up to 20 repositories to stay within reasonable timing and rate limits
-  const reposToProcess = reposData.slice(0, 20);
+  // Sync up to 50 repositories
+  const reposToProcess = reposData.slice(0, 50);
 
   for (const repo of reposToProcess) {
     totalStars += repo.stargazers_count;

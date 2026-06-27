@@ -4,33 +4,35 @@ import { signIn } from "next-auth/react";
 import { FaGithub } from "react-icons/fa";
 import { useState } from "react";
 import { Info } from "lucide-react";
+import { toast } from "sonner";
 
 interface LoginButtonProps {
   hasGithubConfigured?: boolean;
+  isDev?: boolean;
 }
 
-export function LoginButton({ hasGithubConfigured = true }: LoginButtonProps) {
+export function LoginButton({ hasGithubConfigured = true, isDev = false }: LoginButtonProps) {
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleGitHubLogin = () => {
     if (!hasGithubConfigured) {
-      alert("GitHub OAuth environment variables are not configured in your .env.local file. To connect your real GitHub account, please set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET. In the meantime, you can test the application using the 'Sign in with Mock Account (Demo)' option.");
+      toast.error("GitHub OAuth is not configured. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in your .env.local.");
       return;
     }
     setLoading("github");
-    signIn("github", { callbackUrl: "/dashboard" }).catch((e) => {
-      console.error(e);
+    signIn("github", { callbackUrl: "/dashboard" }).catch(() => {
+      toast.error("Failed to connect to GitHub.");
       setLoading(null);
     });
   };
 
   const handleMockLogin = () => {
     setLoading("mock");
-    signIn("credentials", { 
-      callbackUrl: "/dashboard", 
-      username: "demo-developer" 
-    }).catch((e) => {
-      console.error(e);
+    signIn("credentials", {
+      callbackUrl: "/dashboard",
+      username: "demo-developer",
+    }).catch(() => {
+      toast.error("Failed to sign in with demo account.");
       setLoading(null);
     });
   };
@@ -43,19 +45,26 @@ export function LoginButton({ hasGithubConfigured = true }: LoginButtonProps) {
           <div className="space-y-1">
             <h4 className="font-semibold text-white text-[14px]">GitHub Credentials Offline</h4>
             <p className="text-[13px] text-[#a3a3a3] leading-relaxed font-medium">
-              To connect your real GitHub account, define <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_ID</code> and <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_SECRET</code> inside <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">.env.local</code>.
+              To connect your real GitHub account, define{" "}
+              <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_ID</code>{" "}
+              and{" "}
+              <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_SECRET</code>{" "}
+              inside{" "}
+              <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">.env.local</code>.
             </p>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-          <button
-            onClick={handleMockLogin}
-            disabled={loading !== null}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 h-auto rounded-[10px] bg-[#10B981] hover:bg-[#059669] text-white font-semibold text-[13px] transition-colors duration-150 cursor-pointer disabled:opacity-50"
-          >
-            {loading === "mock" ? "Entering Demo Mode..." : "Sign in with Mock Account (Demo)"}
-          </button>
+          {isDev && (
+            <button
+              onClick={handleMockLogin}
+              disabled={loading !== null}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 h-auto rounded-[10px] bg-[#10B981] hover:bg-[#059669] text-white font-semibold text-[13px] transition-colors duration-150 cursor-pointer disabled:opacity-50"
+            >
+              {loading === "mock" ? "Entering Demo Mode..." : "Sign in with Demo Account"}
+            </button>
+          )}
 
           <button
             onClick={handleGitHubLogin}

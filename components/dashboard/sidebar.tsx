@@ -7,9 +7,9 @@ import {
   FolderGit2,
   LineChart,
   Compass,
+  Settings,
   LogOut,
 } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -24,6 +24,7 @@ export function Sidebar({ className }: SidebarProps) {
     { name: "Repositories", href: "/dashboard/repos", icon: FolderGit2 },
     { name: "Analytics", href: "/dashboard/analytics", icon: LineChart },
     { name: "Career Coach", href: "/dashboard/career", icon: Compass },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   return (

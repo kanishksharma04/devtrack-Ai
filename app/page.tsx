@@ -16,6 +16,7 @@ export default async function Home() {
   }
 
   const hasGithubConfigured = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
+  const isDev = process.env.NODE_ENV !== "production";
 
   return (
     <div className="flex flex-col min-h-screen bg-[#090909] text-foreground font-sans relative overflow-hidden">
@@ -45,7 +46,7 @@ export default async function Home() {
         </div>
 
         <div>
-          <LoginButton hasGithubConfigured={hasGithubConfigured} />
+          <LoginButton hasGithubConfigured={hasGithubConfigured} isDev={isDev} />
         </div>
 
         {/* Feature Cards Grid */}
