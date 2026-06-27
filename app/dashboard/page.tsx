@@ -48,13 +48,13 @@ export default async function DashboardPage() {
   if (!hasRepos) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] text-center max-w-xl mx-auto">
-        <div className="p-4 rounded-3xl bg-zinc-900 border border-zinc-800 mb-6 shadow-xl shadow-black/40">
-          <FaGithub className="w-12 h-12 text-zinc-400" />
+        <div className="p-4 rounded-[14px] bg-[#151515] border border-[rgba(255,255,255,0.06)] mb-6">
+          <FaGithub className="w-10 h-10 text-[#737373]" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight text-white mb-2 font-sans">
+        <h2 className="text-[22px] font-semibold tracking-tight text-white mb-2">
           Connect your GitHub account
         </h2>
-        <p className="text-sm text-muted-foreground mb-8">
+        <p className="text-[13px] text-[#a3a3a3] mb-8 leading-relaxed">
           DevTrack AI needs to sync your public repositories, languages, and commit activities to build your developer portfolio charts and run AI audits.
         </p>
         <OnboardingSync />
@@ -87,34 +87,30 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-foreground">
       {/* Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Repositories"
           value={totalReposCount}
           icon={Code2}
           description="Synced from your GitHub"
-          gradient="from-blue-500/10 to-indigo-500/5"
         />
         <StatCard
           title="Total Commits"
           value={totalCommits}
           icon={Activity}
           description="In the past 12 months"
-          gradient="from-emerald-500/10 to-teal-500/5"
         />
         <StatCard
           title="Stars Gained"
           value={totalStars}
           icon={Star}
           description="Across all repositories"
-          gradient="from-amber-500/10 to-orange-500/5"
         />
         <StatCard
           title="Forks Gained"
           value={totalForks}
           icon={GitFork}
           description="Repository forks"
-          gradient="from-pink-500/10 to-purple-500/5"
         />
       </div>
 
@@ -123,28 +119,27 @@ export default async function DashboardPage() {
         {/* Left 2 Columns: Career Analysis Summary & Recent Repos */}
         <div className="md:col-span-2 space-y-8">
           {/* AI Career Coach Panel */}
-          <div className="p-8 border border-border/80 bg-card rounded-3xl relative overflow-hidden shadow-sm">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-emerald-500/5 to-transparent rounded-full blur-3xl opacity-30" />
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 border-b border-border/50 pb-6">
+          <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px]">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 border-b border-[rgba(255,255,255,0.06)] pb-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-zinc-900 border border-border/50 rounded-2xl">
-                  <Compass className="w-6 h-6 text-emerald-400" />
+                <div className="p-2.5 bg-[#1a1a1a] rounded-[10px]">
+                  <Compass className="w-5 h-5 text-[#10B981]" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white font-sans">AI Career Assistant</h2>
-                  <p className="text-xs text-muted-foreground">Portfolio-wide analysis and recommendations.</p>
+                  <h2 className="text-[16px] font-semibold text-white">AI Career Assistant</h2>
+                  <p className="text-[12px] text-[#737373]">Portfolio-wide analysis and recommendations.</p>
                 </div>
               </div>
 
               {dbUser.portfolioAnalysis ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-semibold text-xs uppercase tracking-wider">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] bg-[#10B981]/10 text-[#10B981] font-medium text-[12px] tracking-wide">
                   <Award className="w-3.5 h-3.5" />
                   Score: {dbUser.portfolioAnalysis.overallScore}/100
                 </div>
               ) : (
                 <Link
                   href="/dashboard/career"
-                  className="px-4 py-2 text-xs font-bold text-black bg-white hover:bg-zinc-200 rounded-xl transition-all cursor-pointer"
+                  className="px-4 py-2 text-[13px] font-medium text-[#090909] bg-white hover:bg-[#e5e5e5] rounded-[10px] transition-colors duration-150 cursor-pointer"
                 >
                   Generate Roadmap
                 </Link>
@@ -154,16 +149,16 @@ export default async function DashboardPage() {
             {dbUser.portfolioAnalysis ? (
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
-                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Primary Role</h4>
-                  <div className="text-sm font-semibold text-white mb-4">
+                  <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide mb-2">Primary Role</h4>
+                  <div className="text-[14px] font-medium text-white mb-4">
                     {dbUser.portfolioAnalysis.primaryRole} ({dbUser.portfolioAnalysis.careerLevel})
                   </div>
 
-                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Key Strengths</h4>
-                  <ul className="space-y-1.5 text-xs text-muted-foreground">
+                  <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide mb-2">Key Strengths</h4>
+                  <ul className="space-y-1.5 text-[13px] text-[#a3a3a3]">
                     {(dbUser.portfolioAnalysis.strengths as string[]).slice(0, 3).map((strength, idx) => (
                       <li key={idx} className="flex items-start gap-2">
-                        <span className="text-emerald-400">✓</span>
+                        <span className="text-[#10B981]">✓</span>
                         <span>{strength}</span>
                       </li>
                     ))}
@@ -171,11 +166,11 @@ export default async function DashboardPage() {
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Career Steps</h4>
-                  <ul className="space-y-2 text-xs text-muted-foreground">
+                  <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide mb-2">Career Steps</h4>
+                  <ul className="space-y-2 text-[13px] text-[#a3a3a3]">
                     {(dbUser.portfolioAnalysis.careerRecommendations as string[]).slice(0, 3).map((rec, idx) => (
-                      <li key={idx} className="flex items-start gap-2 bg-muted/40 p-2.5 rounded-xl border border-border/30">
-                        <span className="text-emerald-400 font-bold">•</span>
+                      <li key={idx} className="flex items-start gap-2 bg-[#1a1a1a] p-2.5 rounded-[10px]">
+                        <span className="text-[#10B981]">•</span>
                         <span>{rec}</span>
                       </li>
                     ))}
@@ -183,7 +178,7 @@ export default async function DashboardPage() {
                   <div className="mt-4 text-right">
                     <Link
                       href="/dashboard/career"
-                      className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1"
+                      className="text-[13px] font-medium text-[#10B981] hover:text-[#34d399] inline-flex items-center gap-1 transition-colors duration-150"
                     >
                       View Full Analysis →
                     </Link>
@@ -192,12 +187,12 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="text-center py-6">
-                <p className="text-sm text-muted-foreground mb-4 font-medium">
+                <p className="text-[14px] text-[#a3a3a3] mb-4">
                   Run a portfolio analysis to generate your career role insights, core strengths, and development roadmap!
                 </p>
                 <Link
                   href="/dashboard/career"
-                  className="px-5 py-2.5 text-xs font-bold text-black bg-white hover:bg-zinc-200 rounded-xl transition-all cursor-pointer inline-block"
+                  className="px-5 py-2.5 text-[13px] font-medium text-[#090909] bg-white hover:bg-[#e5e5e5] rounded-[10px] transition-colors duration-150 cursor-pointer inline-block"
                 >
                   Analyze Developer Profile
                 </Link>
@@ -208,15 +203,15 @@ export default async function DashboardPage() {
           {/* Recent Repos */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-white font-sans">Recently Synced Projects</h2>
+              <h2 className="text-[16px] font-semibold text-white">Recently Synced Projects</h2>
               <Link
                 href="/dashboard/repos"
-                className="text-xs font-semibold text-emerald-400 hover:text-emerald-300"
+                className="text-[13px] font-medium text-[#10B981] hover:text-[#34d399] transition-colors duration-150"
               >
                 View all repos
               </Link>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {serializedRepos.map((repo) => (
                 <RepoCard key={repo.id} repo={repo} />
               ))}
@@ -226,19 +221,19 @@ export default async function DashboardPage() {
 
         {/* Right 1 Column: Language Distributions & Analytics Preview */}
         <div className="space-y-8">
-          <div className="p-8 border border-border/80 bg-card rounded-3xl">
-            <h3 className="text-sm font-bold text-white font-sans mb-6">Language breakdown</h3>
+          <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px]">
+            <h3 className="text-[14px] font-semibold text-white mb-6">Language breakdown</h3>
             {dbUser.codingAnalytics?.topLanguages ? (
               <div className="space-y-4">
                 {(dbUser.codingAnalytics.topLanguages as any[]).slice(0, 5).map((lang, idx) => (
                   <div key={idx} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-semibold">
-                      <span className="text-white">{lang.name}</span>
-                      <span className="text-muted-foreground">{lang.percentage}%</span>
+                    <div className="flex items-center justify-between text-[12px]">
+                      <span className="text-white font-medium">{lang.name}</span>
+                      <span className="text-[#737373] font-mono">{lang.percentage}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-[#1a1a1a] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
+                        className="h-full bg-[#10B981] rounded-full"
                         style={{ width: `${lang.percentage}%` }}
                       />
                     </div>
@@ -247,14 +242,14 @@ export default async function DashboardPage() {
                 <div className="pt-4 text-center">
                   <Link
                     href="/dashboard/analytics"
-                    className="text-xs font-semibold text-emerald-400 hover:text-emerald-300"
+                    className="text-[13px] font-medium text-[#10B981] hover:text-[#34d399] transition-colors duration-150"
                   >
                     View detailed analytics →
                   </Link>
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground text-center py-4">No language stats available.</p>
+              <p className="text-[13px] text-[#737373] text-center py-4">No language stats available.</p>
             )}
           </div>
         </div>
