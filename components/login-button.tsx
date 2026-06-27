@@ -14,6 +14,10 @@ export function LoginButton({ hasGithubConfigured = true }: LoginButtonProps) {
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleGitHubLogin = () => {
+    if (!hasGithubConfigured) {
+      alert("GitHub OAuth environment variables are not configured in your .env.local file. To connect your real GitHub account, please set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET. In the meantime, you can test the application using the 'Sign in with Mock Account (Demo)' option.");
+      return;
+    }
     setLoading("github");
     signIn("github", { callbackUrl: "/dashboard" }).catch((e) => {
       console.error(e);
