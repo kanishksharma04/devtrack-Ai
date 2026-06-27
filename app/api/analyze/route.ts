@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { analyzeRepository, analyzePortfolio } from "@/lib/services/ai";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
@@ -15,6 +16,15 @@ export async function POST(req: Request) {
     }
 
     const userId = (session.user as any).id;
+
+    const { success, retryAfter } = rateLimit(`analyze:${userId}`, 10, 60 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: `Too many analysis requests. Please wait ${retryAfter}s before retrying.` },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const { type, repositoryId } = body;
 

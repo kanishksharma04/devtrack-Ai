@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Cpu, RefreshCw, CheckCircle2, ChevronRight } from "lucide-react";
+import { Cpu, RefreshCw, CheckCircle2, ChevronRight, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 interface RepoDetailAuditProps {
   repoId: string;
@@ -14,6 +15,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
 
   const handleAudit = async () => {
     setLoading(true);
+    const toastId = toast.loading("Running AI code audit...");
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -23,12 +25,12 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
       const data = await res.json();
       if (res.ok && data.success) {
         setInsights(data.data);
+        toast.success("Audit complete!", { id: toastId });
       } else {
-        alert(data.error || "Failed to analyze repository.");
+        toast.error(data.error || "Failed to analyze repository.", { id: toastId });
       }
-    } catch (e) {
-      console.error(e);
-      alert("An error occurred during audit.");
+    } catch {
+      toast.error("An error occurred during audit.", { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -56,6 +58,14 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
     );
   }
 
+  const lastUpdated = insights.updatedAt
+    ? new Date(insights.updatedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
+
   const FLAT_COLORS = ["#3b82f6", "#f59e0b", "#10b981", "#ef4444", "#06b6d4"];
 
   const scores = [
@@ -69,9 +79,17 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
   return (
     <div className="space-y-8 text-foreground">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Cpu className="w-4 h-4 text-[#10B981]" />
-          <span className="text-[12px] font-medium text-[#10B981] uppercase tracking-wide">AI Audit Completed</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Cpu className="w-4 h-4 text-[#10B981]" />
+            <span className="text-[12px] font-medium text-[#10B981] uppercase tracking-wide">AI Audit Completed</span>
+          </div>
+          {lastUpdated && (
+            <span className="text-[11px] text-[#525252] flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {lastUpdated}
+            </span>
+          )}
         </div>
         <button
           onClick={handleAudit}
@@ -106,23 +124,16 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
 
       {/* Audit Detail Content */}
       <div className="grid gap-8 md:grid-cols-3">
-        {/* Left Column: Summary */}
         <div className="md:col-span-2 p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <h3 className="text-[14px] font-semibold text-white border-b border-[rgba(255,255,255,0.06)] pb-4">
             Analysis Summary
           </h3>
-          <p className="text-[13px] text-[#a3a3a3] leading-relaxed">
-            {insights.summary}
-          </p>
+          <p className="text-[13px] text-[#a3a3a3] leading-relaxed">{insights.summary}</p>
         </div>
 
-        {/* Right Column: Highlights & Recommendations */}
         <div className="space-y-6">
-          {/* Highlights */}
           <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
-            <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">
-              Project Highlights
-            </h4>
+            <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">Project Highlights</h4>
             <ul className="space-y-3">
               {(insights.highlights as string[]).map((highlight, idx) => (
                 <li key={idx} className="flex gap-2.5 items-start text-[13px] text-[#a3a3a3]">
@@ -133,11 +144,8 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
             </ul>
           </div>
 
-          {/* Recommendations */}
           <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
-            <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">
-              AI Recommendations
-            </h4>
+            <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">AI Recommendations</h4>
             <ul className="space-y-3">
               {(insights.recommendations as string[]).map((rec, idx) => (
                 <li key={idx} className="flex gap-2.5 items-start text-[13px] text-[#a3a3a3]">

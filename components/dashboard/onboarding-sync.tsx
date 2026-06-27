@@ -2,24 +2,25 @@
 
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
 export function OnboardingSync() {
   const [syncing, setSyncing] = useState(false);
 
   const handleSync = async () => {
     setSyncing(true);
+    const toastId = toast.loading("Fetching your GitHub repositories...");
     try {
       const res = await fetch("/api/sync", { method: "POST" });
       const data = await res.json();
       if (res.ok && data.success) {
-        alert("GitHub profile data successfully synchronized!");
+        toast.success("GitHub profile synced successfully!", { id: toastId });
         window.location.reload();
       } else {
-        alert(data.error || "Failed to sync GitHub data.");
+        toast.error(data.error || "Failed to sync GitHub data.", { id: toastId });
       }
-    } catch (e) {
-      console.error(e);
-      alert("An error occurred during synchronization.");
+    } catch {
+      toast.error("An error occurred during synchronization.", { id: toastId });
     } finally {
       setSyncing(false);
     }

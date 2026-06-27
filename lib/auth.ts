@@ -14,21 +14,25 @@ export const authOptions: AuthOptions = {
         },
       },
     }),
-    CredentialsProvider({
-      id: "credentials",
-      name: "Mock Account",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "demo-developer" },
-      },
-      async authorize(credentials) {
-        return {
-          id: "mock-user-id",
-          name: credentials?.username || "Demo Developer",
-          email: "demo@devtrack.ai",
-          image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80",
-        };
-      },
-    }),
+    ...(process.env.NODE_ENV !== "production"
+      ? [
+          CredentialsProvider({
+            id: "credentials",
+            name: "Demo Account",
+            credentials: {
+              username: { label: "Username", type: "text", placeholder: "demo-developer" },
+            },
+            async authorize(credentials) {
+              return {
+                id: "mock-user-id",
+                name: credentials?.username || "Demo Developer",
+                email: "demo@devtrack.ai",
+                image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80",
+              };
+            },
+          }),
+        ]
+      : []),
   ],
   session: {
     strategy: "jwt",

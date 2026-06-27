@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User } from "lucide-react";
+import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 interface CareerAdvisorProps {
   userId: string;
@@ -15,6 +16,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
 
   const handleAnalyze = async () => {
     setLoading(true);
+    const toastId = toast.loading("Evaluating your developer profile...");
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -24,12 +26,12 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
       const data = await res.json();
       if (res.ok && data.success) {
         setAnalysis(data.data);
+        toast.success("Career roadmap generated!", { id: toastId });
       } else {
-        alert(data.error || "Failed to analyze portfolio.");
+        toast.error(data.error || "Failed to analyze portfolio.", { id: toastId });
       }
-    } catch (e) {
-      console.error(e);
-      alert("An error occurred during portfolio analysis.");
+    } catch {
+      toast.error("An error occurred during portfolio analysis.", { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -57,6 +59,16 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
     );
   }
 
+  const lastUpdated = analysis.updatedAt
+    ? new Date(analysis.updatedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
   return (
     <div className="space-y-8 text-foreground">
       {/* Overview Block */}
@@ -68,6 +80,12 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
           <div>
             <h3 className="text-[16px] font-semibold text-white">{analysis.primaryRole}</h3>
             <p className="text-[12px] text-[#737373] font-medium">Career Tier: {analysis.careerLevel}</p>
+            {lastUpdated && (
+              <p className="text-[11px] text-[#525252] flex items-center gap-1 mt-0.5">
+                <Clock className="w-3 h-3" />
+                Last analyzed: {lastUpdated}
+              </p>
+            )}
           </div>
         </div>
 
@@ -90,13 +108,10 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
 
       {/* Details Grid */}
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Left Column: Strengths */}
         <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-4">
             <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-            <h3 className="text-[14px] font-semibold text-white">
-              Core Strengths
-            </h3>
+            <h3 className="text-[14px] font-semibold text-white">Core Strengths</h3>
           </div>
           <ul className="space-y-3.5">
             {(analysis.strengths as string[]).map((strength, idx) => (
@@ -108,13 +123,10 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
           </ul>
         </div>
 
-        {/* Right Column: Skill Gaps */}
         <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-4">
             <AlertTriangle className="w-4 h-4 text-[#f59e0b]" />
-            <h3 className="text-[14px] font-semibold text-white">
-              Gaps & Weak Areas
-            </h3>
+            <h3 className="text-[14px] font-semibold text-white">Gaps & Weak Areas</h3>
           </div>
           <ul className="space-y-3.5">
             {(analysis.weakAreas as string[]).map((weakness, idx) => (
@@ -131,9 +143,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
       <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-6">
         <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-4">
           <Lightbulb className="w-4 h-4 text-[#10B981]" />
-          <h3 className="text-[14px] font-semibold text-white">
-            AI Roadmap & Actionable Steps
-          </h3>
+          <h3 className="text-[14px] font-semibold text-white">AI Roadmap & Actionable Steps</h3>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
@@ -143,9 +153,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
                 <span className="w-6 h-6 rounded-[8px] bg-[#1a1a1a] flex items-center justify-center text-[10px] font-medium text-[#10B981] mb-3">
                   0{idx + 1}
                 </span>
-                <p className="text-[13px] text-[#a3a3a3] leading-relaxed">
-                  {rec}
-                </p>
+                <p className="text-[13px] text-[#a3a3a3] leading-relaxed">{rec}</p>
               </div>
             </div>
           ))}

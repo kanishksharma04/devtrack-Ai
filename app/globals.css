@@ -128,3 +128,21 @@
     @apply font-sans;
   }
 }
+
+:root {
+  --brand-accent: #10B981;
+  --brand-accent-hover: #34d399;
+  --brand-accent-muted: rgba(16, 185, 129, 0.1);
+  --brand-accent-border: rgba(16, 185, 129, 0.2);
+  --surface-1: #090909;
+  --surface-2: #111111;
+  --surface-3: #151515;
+  --surface-4: #1a1a1a;
+  --surface-5: #252525;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --text-dim: #525252;
+}
