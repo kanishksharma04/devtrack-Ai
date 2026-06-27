@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/logo.png" alt="DevTrack AI Logo" width="120" />
 
-## Getting Started
+  <h1 align="center">DevTrack AI</h1>
 
-First, run the development server:
+  <p align="center">
+    <strong>An AI-powered Career Coach & Portfolio Analyzer for Modern Developers.</strong>
+  </p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  <p align="center">
+    <a href="https://devtrack-ai-seven.vercel.app">View Live Demo</a>
+    ·
+    <a href="https://github.com/kanishksharma04/devtrack-Ai/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/kanishksharma04/devtrack-Ai/issues">Request Feature</a>
+  </p>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  <p align="center">
+    <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js" />
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Prisma-3982CE?style=flat-square&logo=Prisma&logoColor=white" alt="Prisma" />
+    <img src="https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel" alt="Vercel" />
+  </p>
+</div>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<br />
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌟 Overview
 
-## Learn More
+**DevTrack AI** is a premium, ultra-modern SaaS platform that syncs directly with your GitHub profile to provide intelligent analytics, automated code audits, and a personalized career progression roadmap. Designed with an aesthetic inspired by Linear and Vercel, it offers an enterprise-grade experience for developers looking to track their growth.
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **🧠 AI Code Audits:** Google Gemini analyzes your repositories for code quality, performance structure, documentation, and readability—giving you actionable feedback to improve.
+- **📊 Interactive Analytics:** Explore deep-dive coding statistics, commit velocities, and language focus breakdowns, all synced automatically from your GitHub history.
+- **🗺️ Career Roadmap:** Map out your strengths, weaknesses, and skill gaps to senior engineering levels and receive customized steps to boost your career.
+- **🔐 Seamless Onboarding:** Securely authenticate with your GitHub account using NextAuth.
+- **💎 Premium Flat UI:** A stunning, meticulously crafted dark mode interface featuring Inter typography, flat styling, and a clean, distraction-free environment.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Tech Stack
 
-## Deploy on Vercel
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Database ORM:** [Prisma](https://www.prisma.io/)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (GitHub Provider)
+- **AI Integration:** Google Gemini API
+- **Icons:** Lucide React & React Icons
+- **Deployment:** Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Getting Started
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+- Node.js (v18+)
+- PostgreSQL Database (e.g., Supabase, Neon, or local)
+- GitHub OAuth Application Credentials
+- Google Gemini API Key
+
+### Installation
+
+1. **Clone the repository**
+   ```sh
+   git clone https://github.com/kanishksharma04/devtrack-Ai.git
+   cd devtrack-ai
+   ```
+
+2. **Install dependencies**
+   ```sh
+   npm install
+   ```
+
+3. **Set up Environment Variables**
+   Create a `.env` file in the root directory and add your keys:
+   ```env
+   # Database (Prisma)
+   DATABASE_URL="your_postgresql_database_url"
+
+   # NextAuth
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your_nextauth_secret"
+
+   # GitHub OAuth
+   GITHUB_CLIENT_ID="your_github_client_id"
+   GITHUB_CLIENT_SECRET="your_github_client_secret"
+
+   # Gemini API
+   GEMINI_API_KEY="your_gemini_api_key"
+   ```
+
+4. **Initialize the Database**
+   ```sh
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Run the Development Server**
+   ```sh
+   npm run dev
+   ```
+
+6. **Open in Browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🎨 Design Philosophy
+
+DevTrack AI was built with a strict "Premium Minimalism" design ethos:
+- Complete removal of unnecessary gradients, glows, and glassmorphism.
+- A controlled color palette (`#090909`, `#111111`, `#151515`).
+- Precise typography using Inter.
+- Subtle `#10B981` (Emerald) highlights to guide user attention.
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <p>Designed and built for elite developers.</p>
+</div>
