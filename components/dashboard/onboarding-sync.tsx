@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
 export function OnboardingSync() {
@@ -27,13 +26,13 @@ export function OnboardingSync() {
   };
 
   return (
-    <Button
+    <button
       onClick={handleSync}
       disabled={syncing}
-      className="gap-2 px-6 py-5 rounded-2xl bg-white hover:bg-zinc-100 text-black font-semibold shadow-md shadow-white/5 transition-all text-sm cursor-pointer disabled:opacity-55"
+      className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-[10px] bg-white hover:bg-[#e5e5e5] text-[#090909] font-medium transition-colors duration-150 text-[13px] cursor-pointer disabled:opacity-50"
     >
       <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
       {syncing ? "Fetching Repositories..." : "Analyze GitHub Profile"}
-    </Button>
+    </button>
   );
 }

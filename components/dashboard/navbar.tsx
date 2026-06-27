@@ -38,32 +38,32 @@ export function Navbar() {
     : "DEV";
 
   return (
-    <header className="flex items-center justify-between px-8 py-4 border-b border-border bg-background/50 backdrop-blur-md sticky top-0 z-50">
+    <header className="flex items-center justify-between px-8 py-4 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50">
       <div>
-        <h1 className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent font-sans">
-          Welcome back, {session?.user?.name || "Developer"}!
+        <h1 className="text-[16px] font-semibold text-white tracking-tight">
+          Welcome back, {session?.user?.name || "Developer"}
         </h1>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[12px] text-[#737373] mt-0.5">
           Analyze your repositories and map your tech career goals.
         </p>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <Button
           onClick={handleSync}
           disabled={syncing}
           variant="outline"
           size="sm"
-          className="rounded-xl border-border bg-card hover:bg-muted text-xs h-9 gap-2 shadow-sm font-medium transition-all cursor-pointer"
+          className="rounded-[10px] border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 gap-2 font-medium transition-colors duration-150 cursor-pointer text-[#a3a3a3] hover:text-white"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
           {syncing ? "Syncing..." : "Sync GitHub"}
         </Button>
 
-        <div className="flex items-center gap-2 border-l border-border pl-4">
-          <Avatar className="w-8 h-8 rounded-xl border border-border shadow-inner">
+        <div className="flex items-center gap-2 border-l border-[rgba(255,255,255,0.06)] pl-3">
+          <Avatar className="w-8 h-8 rounded-[10px] border border-[rgba(255,255,255,0.06)]">
             <AvatarImage src={session?.user?.image || ""} className="object-cover" />
-            <AvatarFallback className="rounded-xl bg-muted text-xs text-muted-foreground font-semibold">
+            <AvatarFallback className="rounded-[10px] bg-[#1a1a1a] text-[11px] text-[#737373] font-medium">
               {userInitials}
             </AvatarFallback>
           </Avatar>

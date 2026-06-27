@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, GitFork, ArrowUpRight, ShieldAlert, Cpu } from "lucide-react";
 import Link from "next/link";
@@ -49,32 +48,32 @@ export function RepoCard({ repo }: RepoCardProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full border border-border/80 bg-card hover:border-zinc-700 transition-all duration-300 group rounded-2xl relative overflow-hidden">
+    <div className="flex flex-col h-full border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] transition-transform duration-150 hover:-translate-y-0.5">
       <div className="p-6 flex-1">
         <div className="flex items-start justify-between mb-3 gap-2">
-          <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate max-w-[200px] font-sans">
+          <h3 className="font-semibold text-[14px] text-white truncate max-w-[200px]">
             {repo.name}
           </h3>
           <Link
             href={`/dashboard/repos/${repo.id}`}
-            className="p-1.5 rounded-lg border border-border/50 bg-muted text-muted-foreground hover:text-foreground hover:bg-zinc-800 transition-colors"
+            className="p-1.5 rounded-[8px] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] text-[#737373] hover:text-white hover:bg-[#252525] transition-colors duration-150"
           >
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <p className="text-xs text-muted-foreground line-clamp-2 min-h-[32px] mb-4">
+        <p className="text-[12px] text-[#a3a3a3] line-clamp-2 min-h-[32px] mb-4">
           {repo.description || "No description provided."}
         </p>
 
-        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
+        <div className="flex items-center gap-3 text-[12px] text-[#737373] mb-4">
           {repo.primaryLanguage && (
-            <Badge variant="secondary" className="px-2 py-0.5 rounded-md text-[10px] bg-muted border-border font-mono">
+            <Badge variant="secondary" className="px-2 py-0.5 rounded-md text-[10px] bg-[#1a1a1a] border-[rgba(255,255,255,0.06)] font-mono text-[#a3a3a3]">
               {repo.primaryLanguage}
             </Badge>
           )}
           <div className="flex items-center gap-1">
-            <Star className="w-3.5 h-3.5 fill-muted-foreground/20" />
+            <Star className="w-3.5 h-3.5" />
             <span>{repo.stars}</span>
           </div>
           <div className="flex items-center gap-1">
@@ -84,18 +83,18 @@ export function RepoCard({ repo }: RepoCardProps) {
         </div>
       </div>
 
-      <div className="px-6 py-4 border-t border-border bg-muted/10 flex items-center justify-between">
+      <div className="px-6 py-4 border-t border-[rgba(255,255,255,0.06)] bg-[#111111] rounded-b-[14px] flex items-center justify-between">
         {insight ? (
           <div className="flex items-center gap-2">
-            <Cpu className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">
+            <Cpu className="w-3.5 h-3.5 text-[#10B981]" />
+            <span className="text-[10px] font-medium text-[#10B981] uppercase tracking-wider">
               Audit Score: {insight.codeQualityScore}/100
             </span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
-            <span className="text-[10px] font-semibold text-amber-500 uppercase tracking-wider">
+            <ShieldAlert className="w-3.5 h-3.5 text-[#f59e0b]" />
+            <span className="text-[10px] font-medium text-[#f59e0b] uppercase tracking-wider">
               No Audit Data
             </span>
           </div>
@@ -105,12 +104,12 @@ export function RepoCard({ repo }: RepoCardProps) {
           <button
             onClick={handleAnalyze}
             disabled={analyzing}
-            className="text-[10px] font-bold text-white hover:text-emerald-400 bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded-lg border border-border transition-colors disabled:opacity-55 cursor-pointer"
+            className="text-[11px] font-medium text-[#a3a3a3] hover:text-white bg-[#1a1a1a] hover:bg-[#252525] px-3 py-1.5 rounded-[8px] border border-[rgba(255,255,255,0.06)] transition-colors duration-150 disabled:opacity-50 cursor-pointer"
           >
             {analyzing ? "Auditing..." : "Run AI Audit"}
           </button>
         )}
       </div>
-    </Card>
+    </div>
   );
 }

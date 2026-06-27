@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import {
   AreaChart,
   Area,
@@ -52,30 +51,38 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
 
   // Get color scale for commits
   const getColorClass = (count: number) => {
-    if (count === 0) return "bg-zinc-900 border border-zinc-950";
-    if (count <= 2) return "bg-emerald-950/80 border border-emerald-950";
-    if (count <= 4) return "bg-emerald-800 border border-emerald-900";
-    if (count <= 8) return "bg-emerald-600 border border-emerald-700";
-    return "bg-emerald-400 border border-emerald-500";
+    if (count === 0) return "bg-[#1a1a1a]";
+    if (count <= 2) return "bg-emerald-950/80";
+    if (count <= 4) return "bg-emerald-800";
+    if (count <= 8) return "bg-emerald-600";
+    return "bg-emerald-400";
+  };
+
+  const tooltipStyle = {
+    backgroundColor: "#151515",
+    border: "1px solid rgba(255,255,255,0.06)",
+    borderRadius: "10px",
+    fontSize: "12px",
+    color: "#fff",
   };
 
   return (
     <div className="space-y-8 text-foreground">
       {/* 1. Contribution Heatmap */}
-      <Card className="p-6 border border-border/80 bg-card rounded-3xl space-y-4">
+      <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
         <div>
-          <h3 className="text-sm font-bold text-white font-sans uppercase tracking-wider mb-1">
+          <h3 className="text-[14px] font-semibold text-white mb-1">
             Contribution Activity
           </h3>
-          <p className="text-xs text-muted-foreground font-medium">
+          <p className="text-[12px] text-[#737373]">
             Your daily commits mapped across the last 365 days.
           </p>
         </div>
 
         <div className="overflow-x-auto pb-2">
-          <div className="flex gap-2 min-w-[760px] p-4 bg-black/40 rounded-2xl border border-border/30 w-fit">
+          <div className="flex gap-2 min-w-[760px] p-4 bg-[#111111] rounded-[10px] w-fit">
             {/* Days label */}
-            <div className="grid grid-rows-7 gap-1 text-[9px] text-muted-foreground font-semibold pr-2 justify-items-end pt-5">
+            <div className="grid grid-rows-7 gap-1 text-[9px] text-[#737373] font-medium pr-2 justify-items-end pt-5">
               <span>Mon</span>
               <span className="invisible">Tue</span>
               <span>Wed</span>
@@ -98,24 +105,24 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 text-[10px] text-muted-foreground font-bold">
+        <div className="flex items-center justify-end gap-2 text-[10px] text-[#737373] font-medium">
           <span>Less</span>
-          <div className="w-2.5 h-2.5 rounded-sm bg-zinc-900 border border-zinc-950" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-950/80 border border-emerald-950" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-800 border border-emerald-900" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-600 border border-emerald-700" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400 border border-emerald-500" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-[#1a1a1a]" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-950/80" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-800" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-600" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400" />
           <span>More</span>
         </div>
-      </Card>
+      </div>
 
       {/* 2. Charts Grid */}
       <div className="grid gap-8 md:grid-cols-2">
         {/* Commit Trend Area Chart */}
-        <Card className="p-6 border border-border bg-card rounded-3xl space-y-4">
+        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-bold text-white font-sans uppercase tracking-wider">
+            <Activity className="w-4 h-4 text-[#10B981]" />
+            <h3 className="text-[14px] font-semibold text-white">
               Commit Velocity
             </h3>
           </div>
@@ -125,31 +132,29 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
                 <AreaChart data={commitData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorCommits" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="month" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: "#18181b", border: "1px solid #27272a", borderRadius: "12px", fontSize: "12px", color: "#fff" }}
-                  />
-                  <Area type="monotone" dataKey="commits" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorCommits)" />
+                  <XAxis dataKey="month" stroke="#525252" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#525252" fontSize={10} tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Area type="monotone" dataKey="commits" stroke="#10b981" strokeWidth={1.5} fillOpacity={1} fill="url(#colorCommits)" />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
+              <div className="flex items-center justify-center h-full text-[13px] text-[#737373]">
                 No commit data available.
               </div>
             )}
           </div>
-        </Card>
+        </div>
 
         {/* Language Pie Chart */}
-        <Card className="p-6 border border-border bg-card rounded-3xl space-y-4">
+        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2">
-            <Code className="w-4 h-4 text-teal-400" />
-            <h3 className="text-sm font-bold text-white font-sans uppercase tracking-wider">
+            <Code className="w-4 h-4 text-[#10B981]" />
+            <h3 className="text-[14px] font-semibold text-white">
               Language Focus
             </h3>
           </div>
@@ -174,7 +179,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
                       </Pie>
                       <Tooltip
                         formatter={(value: any) => [`${(value / 1024).toFixed(1)} KB`]}
-                        contentStyle={{ backgroundColor: "#18181b", border: "1px solid #27272a", borderRadius: "12px", fontSize: "11px", color: "#fff" }}
+                        contentStyle={tooltipStyle}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -182,47 +187,45 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
                 
                 <div className="w-full sm:w-1/2 flex flex-col gap-2 mt-4 sm:mt-0 max-h-48 overflow-y-auto pr-2">
                   {languageData.slice(0, 6).map((lang, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-[11px]">
+                    <div key={idx} className="flex items-center justify-between text-[12px]">
                       <div className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
-                        <span className="font-semibold text-white">{lang.name}</span>
+                        <span className="font-medium text-white">{lang.name}</span>
                       </div>
-                      <span className="text-muted-foreground font-mono">{lang.percentage}%</span>
+                      <span className="text-[#737373] font-mono">{lang.percentage}%</span>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
+              <div className="flex items-center justify-center h-full text-[13px] text-[#737373]">
                 No language data available.
               </div>
             )}
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* 3. Repo Stars Bar Chart */}
       {repoData.length > 0 && (
-        <Card className="p-6 border border-border bg-card rounded-3xl space-y-4">
+        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-amber-400" />
-            <h3 className="text-sm font-bold text-white font-sans uppercase tracking-wider">
+            <Star className="w-4 h-4 text-[#f59e0b]" />
+            <h3 className="text-[14px] font-semibold text-white">
               Project Popularity (Stars)
             </h3>
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={repoData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <XAxis dataKey="name" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "#18181b", border: "1px solid #27272a", borderRadius: "12px", fontSize: "11px", color: "#fff" }}
-                />
+                <XAxis dataKey="name" stroke="#525252" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#525252" fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={tooltipStyle} />
                 <Bar dataKey="stars" fill="#f59e0b" radius={[6, 6, 0, 0]} maxBarSize={45} />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );
