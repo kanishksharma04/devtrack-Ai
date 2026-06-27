@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LoginButton } from "@/components/login-button";
 import { Compass, Cpu, LineChart } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 export const unstable_instant = false;
@@ -20,10 +21,8 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-[#090909] text-foreground font-sans relative overflow-hidden">
       {/* Navigation */}
       <header className="flex items-center justify-between px-8 py-6 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#10B981]">
-            <span className="font-bold text-white text-sm">D</span>
-          </div>
+        <div className="flex items-center gap-3">
+          <Image src="/logo.png" alt="DevTrack AI Logo" width={32} height={32} className="rounded-lg object-contain" />
           <span className="text-lg font-bold text-white tracking-wide">DevTrack AI</span>
         </div>
       </header>
