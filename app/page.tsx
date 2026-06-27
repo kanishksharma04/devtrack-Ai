@@ -14,6 +14,8 @@ export default async function Home() {
     redirect("/dashboard");
   }
 
+  const hasGithubConfigured = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
+
   return (
     <div className="flex flex-col min-h-screen bg-black text-foreground font-sans relative overflow-hidden">
       {/* Background Gradients */}
@@ -48,7 +50,7 @@ export default async function Home() {
         </div>
 
         <div>
-          <LoginButton />
+          <LoginButton hasGithubConfigured={hasGithubConfigured} />
         </div>
 
         {/* Feature Cards Grid */}
