@@ -12,6 +12,7 @@ import {
 import { FaGithub } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -32,10 +33,8 @@ export function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className="flex items-center gap-2.5 px-6 py-5 border-b border-[rgba(255,255,255,0.06)]">
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[#10B981]">
-          <FaGithub className="w-4 h-4 text-white" />
-        </div>
+      <div className="flex items-center gap-3 px-6 py-5 border-b border-[rgba(255,255,255,0.06)]">
+        <Image src="/logo.png" alt="DevTrack AI Logo" width={28} height={28} className="rounded-lg object-contain" />
         <span className="text-[15px] font-semibold text-white tracking-tight">
           DevTrack AI
         </span>
