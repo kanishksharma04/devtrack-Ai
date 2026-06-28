@@ -60,7 +60,7 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
       {/* Header */}
       <header className="border-b border-[rgba(255,255,255,0.06)] bg-[#111111] px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="DevTrack AI" width={24} height={24} className="rounded-md" />
+          <Image src="/DevTrackAI_logo.png" alt="DevTrack AI" width={24} height={24} className="rounded-full object-cover" />
           <span className="text-[14px] font-semibold text-white">DevTrack AI</span>
         </Link>
         <Link
