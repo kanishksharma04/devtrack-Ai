@@ -85,7 +85,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
   return (
     <div className="space-y-8 text-foreground">
       {/* 1. Contribution Heatmap */}
-      <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+      <div className="p-4 md:p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
         <div>
           <h3 className="text-[14px] font-semibold text-white mb-1">
             Contribution Activity
@@ -95,7 +95,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
           </p>
         </div>
 
-        <div className="overflow-x-auto pb-2">
+        <div className="overflow-x-auto pb-2 min-w-0">
           <div className="flex gap-2 p-4 bg-[#111111] rounded-[10px] w-fit">
             {/* Day-of-week labels */}
             <div className="flex flex-col gap-1 text-[9px] text-[#737373] font-medium pr-1 justify-items-end" style={{ paddingTop: "18px" }}>
@@ -144,7 +144,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
       {/* 2. Charts Grid */}
       <div className="grid gap-8 md:grid-cols-2">
         {/* Commit Trend Area Chart */}
-        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-4 md:p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-[#10B981]" />
             <h3 className="text-[14px] font-semibold text-white">
@@ -176,7 +176,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
         </div>
 
         {/* Language Pie Chart */}
-        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-4 md:p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2">
             <Code className="w-4 h-4 text-[#10B981]" />
             <h3 className="text-[14px] font-semibold text-white">
@@ -233,7 +233,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
 
       {/* 3. Repo Stars Bar Chart */}
       {repoData.length > 0 && (
-        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-4 md:p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2">
             <Star className="w-4 h-4 text-[#f59e0b]" />
             <h3 className="text-[14px] font-semibold text-white">

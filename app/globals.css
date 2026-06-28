@@ -129,6 +129,15 @@
   }
 }
 
+@layer utilities {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
 :root {
   --brand-accent: #10B981;
   --brand-accent-hover: #34d399;

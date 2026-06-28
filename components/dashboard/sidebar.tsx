@@ -9,14 +9,17 @@ import {
   Compass,
   Settings,
   LogOut,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  onClose?: () => void;
+}
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   const links = [
@@ -30,15 +33,22 @@ export function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "flex flex-col w-64 border-r border-[rgba(255,255,255,0.06)] bg-[#111111] h-screen sticky top-0 text-foreground",
+        "flex flex-col w-64 border-r border-[rgba(255,255,255,0.06)] bg-[#111111] h-full text-foreground",
         className
       )}
     >
       <div className="flex items-center gap-3 px-6 py-5 border-b border-[rgba(255,255,255,0.06)]">
         <Image src="/DevTrackAI_logo.png" alt="DevTrack AI" width={28} height={28} className="rounded-full object-cover" />
-        <span className="text-[15px] font-semibold text-white tracking-tight">
+        <span className="flex-1 text-[15px] font-semibold text-white tracking-tight">
           DevTrack AI
         </span>
+        <button
+          onClick={onClose}
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors"
+          aria-label="Close menu"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
       <nav className="flex-1 px-3 py-5 space-y-0.5">
@@ -49,6 +59,7 @@ export function Sidebar({ className }: SidebarProps) {
             <Link
               key={link.href}
               href={link.href}
+              onClick={() => onClose?.()}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-[10px] text-[14px] font-medium transition-colors duration-150 relative",
                 isActive

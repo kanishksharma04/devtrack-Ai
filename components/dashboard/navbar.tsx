@@ -3,12 +3,12 @@
 import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Menu } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export function Navbar() {
+export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data: session } = useSession();
   const [syncing, setSyncing] = useState(false);
   const router = useRouter();
@@ -41,17 +41,27 @@ export function Navbar() {
     : "DEV";
 
   return (
-    <header className="flex items-center justify-between px-8 py-4 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50">
-      <div>
-        <h1 className="text-[16px] font-semibold text-white tracking-tight">
-          Welcome back, {session?.user?.name || "Developer"}
-        </h1>
-        <p className="text-[12px] text-[#737373] mt-0.5">
-          Analyze your repositories and map your tech career goals.
-        </p>
+    <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50 shrink-0 pt-safe">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <button
+          onClick={onMenuClick}
+          className="md:hidden flex items-center justify-center w-10 h-10 shrink-0 rounded-lg text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors"
+          aria-label="Open menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="min-w-0">
+          <h1 className="text-[16px] font-semibold text-white tracking-tight truncate">
+            Welcome back, {session?.user?.name || "Developer"}
+          </h1>
+          <p className="hidden sm:block text-[12px] text-[#737373] mt-0.5">
+            Analyze your repositories and map your tech career goals.
+          </p>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 shrink-0">
         <Button
           onClick={handleSync}
           disabled={syncing}
@@ -60,7 +70,7 @@ export function Navbar() {
           className="rounded-[10px] border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 gap-2 font-medium transition-colors duration-150 cursor-pointer text-[#a3a3a3] hover:text-white"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
-          {syncing ? "Syncing..." : "Sync GitHub"}
+          <span className="hidden sm:inline">{syncing ? "Syncing..." : "Sync GitHub"}</span>
         </Button>
 
         <div className="flex items-center gap-2 border-l border-[rgba(255,255,255,0.06)] pl-3">
