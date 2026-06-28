@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, GitFork, ArrowUpRight, ShieldAlert, Cpu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface RepoCardProps {
   repo: {
@@ -36,12 +37,12 @@ export function RepoCard({ repo }: RepoCardProps) {
       const data = await res.json();
       if (res.ok && data.success) {
         setInsight(data.data);
+        toast.success("Audit complete!");
       } else {
-        alert(data.error || "Failed to analyze repository.");
+        toast.error(data.error || "Failed to analyze repository.");
       }
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred during repo analysis.");
+    } catch {
+      toast.error("An error occurred during repo analysis.");
     } finally {
       setAnalyzing(false);
     }

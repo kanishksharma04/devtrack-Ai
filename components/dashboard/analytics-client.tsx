@@ -39,15 +39,31 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
 
   // Generate heatmap coordinates (last 365 days)
   const today = new Date();
-  const days = [];
+  const days: { date: string; count: number }[] = [];
   const dailyCommits = analytics?.dailyContributions || {};
 
   for (let i = 364; i >= 0; i--) {
     const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
-    const dateStr = d.toISOString().split("T")[0];
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     const count = dailyCommits[dateStr] || 0;
     days.push({ date: dateStr, count });
   }
+
+  // Build weeks (columns of 7 days)
+  const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const weeks: { date: string; count: number }[][] = [];
+  for (let i = 0; i < days.length; i += 7) {
+    weeks.push(days.slice(i, i + 7));
+  }
+
+  // Determine month label per column (show label when the month changes)
+  const weekMonthLabels: (string | null)[] = weeks.map((week, idx) => {
+    const firstDay = new Date(week[0].date);
+    const month = firstDay.getMonth();
+    if (idx === 0) return MONTH_NAMES[month];
+    const prevFirstDay = new Date(weeks[idx - 1][0].date);
+    return firstDay.getMonth() !== prevFirstDay.getMonth() ? MONTH_NAMES[month] : null;
+  });
 
   // Get color scale for commits
   const getColorClass = (count: number) => {
@@ -80,26 +96,35 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
         </div>
 
         <div className="overflow-x-auto pb-2">
-          <div className="flex gap-2 min-w-[760px] p-4 bg-[#111111] rounded-[10px] w-fit">
-            {/* Days label */}
-            <div className="grid grid-rows-7 gap-1 text-[9px] text-[#737373] font-medium pr-2 justify-items-end pt-5">
-              <span>Mon</span>
-              <span className="invisible">Tue</span>
-              <span>Wed</span>
-              <span className="invisible">Thu</span>
-              <span>Fri</span>
-              <span className="invisible">Sat</span>
-              <span className="invisible">Sun</span>
+          <div className="flex gap-2 p-4 bg-[#111111] rounded-[10px] w-fit">
+            {/* Day-of-week labels */}
+            <div className="flex flex-col gap-1 text-[9px] text-[#737373] font-medium pr-1 justify-items-end" style={{ paddingTop: "18px" }}>
+              <span className="h-2.5 leading-none">Mon</span>
+              <span className="h-2.5 leading-none invisible">Tue</span>
+              <span className="h-2.5 leading-none">Wed</span>
+              <span className="h-2.5 leading-none invisible">Thu</span>
+              <span className="h-2.5 leading-none">Fri</span>
+              <span className="h-2.5 leading-none invisible">Sat</span>
+              <span className="h-2.5 leading-none invisible">Sun</span>
             </div>
-            
-            {/* Heatmap Grid */}
-            <div className="grid grid-flow-col grid-rows-7 gap-1">
-              {days.map((day, idx) => (
-                <div
-                  key={idx}
-                  className={`w-2.5 h-2.5 rounded-sm transition-all hover:scale-125 ${getColorClass(day.count)}`}
-                  title={`${day.date}: ${day.count} commits`}
-                />
+
+            {/* Weeks with month labels */}
+            <div className="flex gap-1">
+              {weeks.map((week, weekIdx) => (
+                <div key={weekIdx} className="flex flex-col gap-1">
+                  {/* Month label row */}
+                  <span className="h-3.5 text-[9px] text-[#737373] font-medium leading-none whitespace-nowrap">
+                    {weekMonthLabels[weekIdx] ?? ""}
+                  </span>
+                  {/* Day cells */}
+                  {week.map((day, dayIdx) => (
+                    <div
+                      key={dayIdx}
+                      className={`w-2.5 h-2.5 rounded-sm transition-all hover:scale-125 ${getColorClass(day.count)}`}
+                      title={`${day.date}: ${day.count} commit${day.count !== 1 ? "s" : ""}`}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           </div>

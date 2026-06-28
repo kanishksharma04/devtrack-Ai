@@ -1,8 +1,7 @@
-import { prisma } from "@/lib/prisma";
-
-import { notFound } from "next/navigation";
-
 export const dynamic = "force-dynamic";
+
+import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {

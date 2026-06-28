@@ -151,7 +151,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
             <div key={idx} className="p-5 rounded-[10px] bg-[#111111] border border-[rgba(255,255,255,0.06)] space-y-2 flex flex-col justify-between h-full">
               <div>
                 <span className="w-6 h-6 rounded-[8px] bg-[#1a1a1a] flex items-center justify-center text-[10px] font-medium text-[#10B981] mb-3">
-                  0{idx + 1}
+                  {String(idx + 1).padStart(2, "0")}
                 </span>
                 <p className="text-[13px] text-[#a3a3a3] leading-relaxed">{rec}</p>
               </div>
