@@ -17,6 +17,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   OAuthSignin: "Could not initiate GitHub sign-in.",
   Callback: "Authentication callback error. Please try again.",
   OAuthCallbackError: "GitHub rejected the OAuth request.",
+  AccessDenied: "Sign-in was denied — check your database connection and environment variables on Vercel.",
   Default: "Authentication failed. Please try again.",
 };
 

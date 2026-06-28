@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function OnboardingSync() {
   const [syncing, setSyncing] = useState(false);
+  const router = useRouter();
 
   const handleSync = async () => {
     setSyncing(true);
@@ -15,7 +17,7 @@ export function OnboardingSync() {
       const data = await res.json();
       if (res.ok && data.success) {
         toast.success("GitHub profile synced successfully!", { id: toastId });
-        window.location.reload();
+        router.refresh();
       } else {
         toast.error(data.error || "Failed to sync GitHub data.", { id: toastId });
       }

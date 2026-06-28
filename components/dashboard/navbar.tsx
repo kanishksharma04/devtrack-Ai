@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const { data: session } = useSession();
   const [syncing, setSyncing] = useState(false);
+  const router = useRouter();
 
   const handleSync = async () => {
     setSyncing(true);
@@ -19,7 +21,7 @@ export function Navbar() {
       const data = await res.json();
       if (res.ok && data.success) {
         toast.success("GitHub data synced successfully!", { id: toastId });
-        window.location.reload();
+        router.refresh();
       } else {
         toast.error(data.error || "Failed to sync data.", { id: toastId });
       }
