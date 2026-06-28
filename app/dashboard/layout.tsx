@@ -1,7 +1,7 @@
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Navbar } from "@/components/dashboard/navbar";
 
-export const unstable_instant = false;
+export const dynamic = "force-dynamic";
 
 export default function DashboardLayout({
   children,

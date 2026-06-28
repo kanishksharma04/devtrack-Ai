@@ -6,9 +6,13 @@ import { Compass, Cpu, LineChart } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
-export const unstable_instant = false;
+export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: Promise<{ error?: string }>;
+}) {
   const session = await getServerSession(authOptions);
 
   if (session && (session as any).accessToken) {
@@ -17,6 +21,8 @@ export default async function Home() {
 
   const hasGithubConfigured = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
   const isDev = process.env.NODE_ENV !== "production";
+  const resolvedParams = searchParams ? await searchParams : {};
+  const authError = resolvedParams?.error ?? null;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#090909] text-foreground font-sans relative overflow-hidden">
@@ -46,7 +52,7 @@ export default async function Home() {
         </div>
 
         <div>
-          <LoginButton hasGithubConfigured={hasGithubConfigured} isDev={isDev} />
+          <LoginButton hasGithubConfigured={hasGithubConfigured} isDev={isDev} authError={authError} />
         </div>
 
         {/* Feature Cards Grid */}

@@ -2,23 +2,36 @@
 
 import { signIn } from "next-auth/react";
 import { FaGithub } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Info } from "lucide-react";
 import { toast } from "sonner";
 
 interface LoginButtonProps {
   hasGithubConfigured?: boolean;
   isDev?: boolean;
+  authError?: string | null;
 }
 
-export function LoginButton({ hasGithubConfigured = true, isDev = false }: LoginButtonProps) {
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  OAuthCallback: "GitHub OAuth failed. Check your Client ID and Secret.",
+  OAuthSignin: "Could not initiate GitHub sign-in.",
+  Callback: "Authentication callback error. Please try again.",
+  OAuthCallbackError: "GitHub rejected the OAuth request.",
+  Default: "Authentication failed. Please try again.",
+};
+
+export function LoginButton({ hasGithubConfigured = true, isDev = false, authError }: LoginButtonProps) {
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleGitHubLogin = () => {
-    if (!hasGithubConfigured) {
-      toast.error("GitHub OAuth is not configured. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in your .env.local.");
-      return;
+  useEffect(() => {
+    if (authError) {
+      const message = AUTH_ERROR_MESSAGES[authError] ?? AUTH_ERROR_MESSAGES.Default;
+      toast.error(message, { id: "auth-error" });
     }
+  }, [authError]);
+
+  const handleGitHubLogin = () => {
+    if (!hasGithubConfigured) return;
     setLoading("github");
     signIn("github", { callbackUrl: "/dashboard" }).catch(() => {
       toast.error("Failed to connect to GitHub.");
