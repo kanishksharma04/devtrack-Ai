@@ -1,9 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider   = "prisma-client-js"
-  output     = "../lib/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -21,10 +18,10 @@ model User {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   accounts          Account[]
-  sessions          Session[]
-  repositories      Repository[]
-  portfolioAnalysis PortfolioAnalysis?
   codingAnalytics   CodingAnalytics?
+  portfolioAnalysis PortfolioAnalysis?
+  repositories      Repository[]
+  sessions          Session[]
 }
 
 model Account {
@@ -33,15 +30,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -68,12 +64,12 @@ model Repository {
   githubId        BigInt             @unique
   name            String
   fullName        String
-  description     String?            @db.Text
+  description     String?
   htmlUrl         String
   stars           Int                @default(0)
   forks           Int                @default(0)
   primaryLanguage String?
-  languages       Json?              // Key-value store of languages and byte size
+  languages       Json?
   size            Int                @default(0)
   openIssues      Int                @default(0)
   isPrivate       Boolean            @default(false)
@@ -95,9 +91,9 @@ model RepositoryInsight {
   performanceScore   Int        @default(0)
   securityScore      Int        @default(0)
   readabilityScore   Int        @default(0)
-  summary            String     @db.Text
-  highlights         Json       // JSON list of key highlights (string[])
-  recommendations    Json       // JSON list of actionable suggestions (string[])
+  summary            String
+  highlights         Json
+  recommendations    Json
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   repository         Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
@@ -107,11 +103,11 @@ model PortfolioAnalysis {
   id                    String   @id @default(uuid())
   userId                String   @unique
   overallScore          Int      @default(0)
-  careerLevel           String   // Junior, Mid, Senior, Lead
-  primaryRole           String   // Frontend, Backend, Fullstack, Mobile, DevOps, Data/AI
-  strengths             Json     // JSON list of strengths (string[])
-  weakAreas             Json     // JSON list of weak areas (string[])
-  careerRecommendations Json     // JSON list of recommendations (string[])
+  careerLevel           String
+  primaryRole           String
+  strengths             Json
+  weakAreas             Json
+  careerRecommendations Json
   generatedAt           DateTime @default(now())
   updatedAt             DateTime @updatedAt
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -121,9 +117,9 @@ model CodingAnalytics {
   id                 String   @id @default(uuid())
   userId             String   @unique
   totalCommits       Int      @default(0)
-  commitsPerMonth    Json?    // Chart data of commit counts
-  dailyContributions Json?    // Calendar data for heatmap
-  topLanguages       Json?    // language breakdown stats
+  commitsPerMonth    Json?
+  dailyContributions Json?
+  topLanguages       Json?
   totalStars         Int      @default(0)
   totalForks         Int      @default(0)
   lastSyncedAt       DateTime @default(now())
