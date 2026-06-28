@@ -64,7 +64,7 @@ export default async function RepoDetailPage({ params }: RepoDetailPageProps) {
         </Link>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/50 pb-6">
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h2 className="text-2xl font-bold tracking-tight text-white font-sans">
                 {repo.name}
@@ -80,7 +80,7 @@ export default async function RepoDetailPage({ params }: RepoDetailPageProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="flex items-center gap-3 text-xs text-muted-foreground border border-border/85 px-4 py-2 rounded-xl bg-card">
               <div className="flex items-center gap-1">
                 <Star className="w-3.5 h-3.5 fill-muted-foreground/10" />

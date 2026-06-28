@@ -119,7 +119,7 @@ export default async function DashboardPage() {
         {/* Left 2 Columns: Career Analysis Summary & Recent Repos */}
         <div className="md:col-span-2 space-y-8">
           {/* AI Career Coach Panel */}
-          <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px]">
+          <div className="p-4 md:p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px]">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 border-b border-[rgba(255,255,255,0.06)] pb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-[#1a1a1a] rounded-[10px]">
@@ -221,7 +221,7 @@ export default async function DashboardPage() {
 
         {/* Right 1 Column: Language Distributions & Analytics Preview */}
         <div className="space-y-8">
-          <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px]">
+          <div className="p-4 md:p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px]">
             <h3 className="text-[14px] font-semibold text-white mb-6">Language breakdown</h3>
             {dbUser.codingAnalytics?.topLanguages ? (
               <div className="space-y-4">

@@ -72,7 +72,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
   return (
     <div className="space-y-8 text-foreground">
       {/* Overview Block */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#151515] p-6 rounded-[14px] border border-[rgba(255,255,255,0.06)]">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#151515] p-4 md:p-6 rounded-[14px] border border-[rgba(255,255,255,0.06)]">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-[10px] bg-[#1a1a1a] flex items-center justify-center text-[#10B981]">
             <User className="w-5 h-5" />
@@ -108,7 +108,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
 
       {/* Details Grid */}
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-4 md:p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-4">
             <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
             <h3 className="text-[14px] font-semibold text-white">Core Strengths</h3>
@@ -123,7 +123,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
           </ul>
         </div>
 
-        <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-4 md:p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-4">
             <AlertTriangle className="w-4 h-4 text-[#f59e0b]" />
             <h3 className="text-[14px] font-semibold text-white">Gaps & Weak Areas</h3>
@@ -140,7 +140,7 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
       </div>
 
       {/* Career Steps */}
-      <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-6">
+      <div className="p-4 md:p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-6">
         <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-4">
           <Lightbulb className="w-4 h-4 text-[#10B981]" />
           <h3 className="text-[14px] font-semibold text-white">AI Roadmap & Actionable Steps</h3>

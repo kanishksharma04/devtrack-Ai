@@ -102,7 +102,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
       </div>
 
       {/* Scores Grid */}
-      <div className="grid gap-4 sm:grid-cols-5">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         {scores.map((score, idx) => (
           <div key={idx} className="p-5 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] flex flex-col justify-between">
             <span className="text-[10px] font-medium text-[#737373] uppercase tracking-wide mb-3">
@@ -124,7 +124,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
 
       {/* Audit Detail Content */}
       <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="md:col-span-2 p-4 md:p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
           <h3 className="text-[14px] font-semibold text-white border-b border-[rgba(255,255,255,0.06)] pb-4">
             Analysis Summary
           </h3>
@@ -132,7 +132,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
         </div>
 
         <div className="space-y-6">
-          <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+          <div className="p-4 md:p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
             <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">Project Highlights</h4>
             <ul className="space-y-3">
               {(insights.highlights as string[]).map((highlight, idx) => (
@@ -144,7 +144,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
             </ul>
           </div>
 
-          <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+          <div className="p-4 md:p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
             <h4 className="text-[12px] font-medium text-[#737373] uppercase tracking-wide">AI Recommendations</h4>
             <ul className="space-y-3">
               {(insights.recommendations as string[]).map((rec, idx) => (

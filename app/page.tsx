@@ -27,7 +27,7 @@ export default async function Home({
   return (
     <div className="flex flex-col min-h-screen bg-[#090909] text-foreground font-sans relative overflow-hidden">
       {/* Navigation */}
-      <header className="flex items-center justify-between px-8 py-6 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50">
+      <header className="flex items-center justify-between px-4 sm:px-8 py-5 sm:py-6 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50 pt-safe">
         <div className="flex items-center gap-3">
           <Image src="/DevTrackAI_logo.png" alt="DevTrack AI" width={32} height={32} className="rounded-full object-cover" />
           <span className="text-lg font-bold text-white tracking-wide">DevTrack AI</span>
@@ -35,7 +35,7 @@ export default async function Home({
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center py-20 px-6 text-center max-w-4xl mx-auto space-y-10 z-10">
+      <main className="flex-1 flex flex-col items-center justify-center py-12 sm:py-20 px-4 sm:px-6 text-center max-w-4xl mx-auto space-y-10 z-10">
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#10B981]/20 bg-[#10B981]/10 text-[#10B981] text-xs font-semibold uppercase tracking-wider">
             <span>✨ Now in Enterprise Beta</span>
