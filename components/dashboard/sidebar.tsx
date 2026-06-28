@@ -35,7 +35,7 @@ export function Sidebar({ className }: SidebarProps) {
       )}
     >
       <div className="flex items-center gap-3 px-6 py-5 border-b border-[rgba(255,255,255,0.06)]">
-        <Image src="/logo.png" alt="DevTrack AI Logo" width={28} height={28} className="rounded-lg object-contain" />
+        <Image src="/DevTrackAI_logo.png" alt="DevTrack AI" width={28} height={28} className="rounded-full object-cover" />
         <span className="text-[15px] font-semibold text-white tracking-tight">
           DevTrack AI
         </span>

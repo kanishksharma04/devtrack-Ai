@@ -29,7 +29,7 @@ export default async function Home({
       {/* Navigation */}
       <header className="flex items-center justify-between px-8 py-6 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="DevTrack AI Logo" width={32} height={32} className="rounded-lg object-contain" />
+          <Image src="/DevTrackAI_logo.png" alt="DevTrack AI" width={32} height={32} className="rounded-full object-cover" />
           <span className="text-lg font-bold text-white tracking-wide">DevTrack AI</span>
         </div>
       </header>
