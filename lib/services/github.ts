@@ -1,4 +1,11 @@
 import { prisma } from "../prisma";
+import {
+  getCachedRepos,
+  setCachedRepos,
+  getCachedLanguages,
+  setCachedLanguages,
+  invalidateUserReposCache,
+} from "../cache/github-cache";
 
 interface GitHubRepoResponse {
   id: number;
@@ -247,6 +254,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     };
   }
 
+  // Invalidate the repos-list cache so this sync always gets fresh data from GitHub.
+  await invalidateUserReposCache(userId);
+
   const ghUser = await fetchGitHubUser(accessToken);
   const username = ghUser.login;
 
@@ -256,23 +266,29 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     data: { githubUsername: username },
   });
 
-  // Fetch repositories of authenticated user sorted by last pushed
-  const reposRes = await fetch(
-    "https://api.github.com/user/repos?type=owner&sort=pushed&per_page=50",
-    {
-      headers: {
-        Authorization: `token ${accessToken}`,
-        Accept: "application/vnd.github.v3+json",
-        "User-Agent": "DevTrack-AI",
-      },
+  // Try repos-list from cache first (won't hit after invalidation above, but
+  // retained so warm reads between syncs still benefit if called externally).
+  let reposData = await getCachedRepos(userId);
+  if (!reposData) {
+    const reposRes = await fetch(
+      "https://api.github.com/user/repos?type=owner&sort=pushed&per_page=50",
+      {
+        headers: {
+          Authorization: `token ${accessToken}`,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "DevTrack-AI",
+        },
+      }
+    );
+
+    if (!reposRes.ok) {
+      throw new Error(`GitHub Repos API returned status ${reposRes.status}: ${reposRes.statusText}`);
     }
-  );
 
-  if (!reposRes.ok) {
-    throw new Error(`GitHub Repos API returned status ${reposRes.status}: ${reposRes.statusText}`);
+    reposData = (await reposRes.json()) as GitHubRepoResponse[];
+    // Cache for short window — subsequent reads within the sync are warm.
+    await setCachedRepos(userId, reposData);
   }
-
-  const reposData = (await reposRes.json()) as GitHubRepoResponse[];
 
   const syncedRepos = [];
   let totalStars = 0;
@@ -298,22 +314,28 @@ export async function syncGitHubData(userId: string, accessToken: string) {
 
     let languages: Record<string, number> = {};
     try {
-      const langRes = await fetch(
-        `https://api.github.com/repos/${username}/${repo.name}/languages`,
-        {
-          headers: {
-            Authorization: `token ${accessToken}`,
-            Accept: "application/vnd.github.v3+json",
-            "User-Agent": "DevTrack-AI",
-          },
-        }
-      );
+      const cached = await getCachedLanguages(userId, repo.name);
+      if (cached) {
+        languages = cached;
+      } else {
+        const langRes = await fetch(
+          `https://api.github.com/repos/${username}/${repo.name}/languages`,
+          {
+            headers: {
+              Authorization: `token ${accessToken}`,
+              Accept: "application/vnd.github.v3+json",
+              "User-Agent": "DevTrack-AI",
+            },
+          }
+        );
 
-      if (langRes.ok) {
-        languages = await langRes.json();
-        for (const [lang, bytes] of Object.entries(languages)) {
-          languageStats[lang] = (languageStats[lang] || 0) + bytes;
+        if (langRes.ok) {
+          languages = await langRes.json();
+          await setCachedLanguages(userId, repo.name, languages);
         }
+      }
+      for (const [lang, bytes] of Object.entries(languages)) {
+        languageStats[lang] = (languageStats[lang] || 0) + bytes;
       }
     } catch (err) {
       console.error(`Failed to fetch languages for repo ${repo.name}:`, err);

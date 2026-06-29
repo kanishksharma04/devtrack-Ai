@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Cpu, RefreshCw, CheckCircle2, ChevronRight, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
+import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
 
 interface RepoDetailAuditProps {
   repoId: string;
@@ -11,30 +12,35 @@ interface RepoDetailAuditProps {
 
 export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProps) {
   const [insights, setInsights] = useState(initialInsights);
-  const [loading, setLoading] = useState(false);
+  const job = useAnalysisJob();
+  const toastRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    if (job.status === "completed" && job.data) {
+      setInsights(job.data);
+      if (toastRef.current !== null) toast.success("Audit complete!", { id: toastRef.current });
+    } else if (job.status === "failed") {
+      if (toastRef.current !== null) toast.error(job.error || "Audit failed.", { id: toastRef.current });
+    }
+  }, [job.status, job.data, job.error]);
 
   const handleAudit = async () => {
-    setLoading(true);
-    const toastId = toast.loading("Running AI code audit...");
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "repo", repositoryId: repoId }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setInsights(data.data);
-        toast.success("Audit complete!", { id: toastId });
+    const id = toast.loading("Running AI code audit...");
+    toastRef.current = id;
+
+    const result = await job.startJob("repo", repoId);
+    if (!result.ok) {
+      toast.dismiss(id);
+      toastRef.current = null;
+      if (result.httpStatus === 429) {
+        toast.error(result.error || "Rate limit reached. Please wait before retrying.");
       } else {
-        toast.error(data.error || "Failed to analyze repository.", { id: toastId });
+        toast.error(result.error || "Failed to start audit.");
       }
-    } catch {
-      toast.error("An error occurred during audit.", { id: toastId });
-    } finally {
-      setLoading(false);
     }
   };
+
+  const loading = job.loading || job.status === "queued" || job.status === "running";
 
   if (!insights) {
     return (

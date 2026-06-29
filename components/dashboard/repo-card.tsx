@@ -3,8 +3,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Star, GitFork, ArrowUpRight, ShieldAlert, Cpu } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
 
 interface RepoCardProps {
   repo: {
@@ -22,31 +23,37 @@ interface RepoCardProps {
 }
 
 export function RepoCard({ repo }: RepoCardProps) {
-  const [analyzing, setAnalyzing] = useState(false);
   const [insight, setInsight] = useState(repo.insights);
+  const job = useAnalysisJob();
+  const toastRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    if (job.status === "completed" && job.data) {
+      setInsight(job.data);
+      if (toastRef.current !== null) toast.success("Audit complete!", { id: toastRef.current });
+    } else if (job.status === "failed") {
+      if (toastRef.current !== null) toast.error(job.error || "Audit failed.", { id: toastRef.current });
+    }
+  }, [job.status, job.data, job.error]);
 
   const handleAnalyze = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setAnalyzing(true);
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "repo", repositoryId: repo.id }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setInsight(data.data);
-        toast.success("Audit complete!");
+    const id = toast.loading("Running AI code audit...");
+    toastRef.current = id;
+
+    const result = await job.startJob("repo", repo.id);
+    if (!result.ok) {
+      toast.dismiss(id);
+      toastRef.current = null;
+      if (result.httpStatus === 429) {
+        toast.error(result.error || "Rate limit reached. Please wait before retrying.");
       } else {
-        toast.error(data.error || "Failed to analyze repository.");
+        toast.error(result.error || "An error occurred during repo analysis.");
       }
-    } catch {
-      toast.error("An error occurred during repo analysis.");
-    } finally {
-      setAnalyzing(false);
     }
   };
+
+  const analyzing = job.loading || job.status === "queued" || job.status === "running";
 
   return (
     <div className="flex flex-col h-full border border-border bg-card rounded-[14px] transition-transform duration-150 hover:-translate-y-0.5">
