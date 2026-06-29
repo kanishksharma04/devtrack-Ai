@@ -52,7 +52,7 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
     : "DEV";
 
   return (
-    <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-border bg-sidebar sticky top-0 z-50 shrink-0 pt-safe">
+    <header className="flex items-center justify-between px-4 md:px-8 min-h-16 border-b border-border bg-sidebar sticky top-0 z-50 shrink-0 pt-safe">
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <button
           onClick={onMenuClick}
