@@ -1,41 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
+import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
 
 interface CareerAdvisorProps {
   userId: string;
   initialAnalysis: any;
 }
 
-export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
+export function CareerAdvisor({ userId: _userId, initialAnalysis }: CareerAdvisorProps) {
   const [analysis, setAnalysis] = useState(initialAnalysis);
-  const [loading, setLoading] = useState(false);
+  const job = useAnalysisJob();
+  const toastRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    if (job.status === "completed" && job.data) {
+      setAnalysis(job.data);
+      if (toastRef.current !== null) toast.success("Career roadmap generated!", { id: toastRef.current });
+    } else if (job.status === "failed") {
+      if (toastRef.current !== null) toast.error(job.error || "Analysis failed.", { id: toastRef.current });
+    }
+  }, [job.status, job.data, job.error]);
 
   const handleAnalyze = async () => {
-    setLoading(true);
-    const toastId = toast.loading("Evaluating your developer profile...");
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "portfolio" }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setAnalysis(data.data);
-        toast.success("Career roadmap generated!", { id: toastId });
+    const id = toast.loading("Evaluating your developer profile...");
+    toastRef.current = id;
+
+    const result = await job.startJob("portfolio");
+    if (!result.ok) {
+      toast.dismiss(id);
+      toastRef.current = null;
+      if (result.httpStatus === 429) {
+        toast.error(result.error || "Rate limit reached. Please wait before retrying.");
       } else {
-        toast.error(data.error || "Failed to analyze portfolio.", { id: toastId });
+        toast.error(result.error || "Failed to start analysis.");
       }
-    } catch {
-      toast.error("An error occurred during portfolio analysis.", { id: toastId });
-    } finally {
-      setLoading(false);
     }
+    // On success, the useEffect above fires when status becomes completed/failed.
   };
+
+  const loading = job.loading || job.status === "queued" || job.status === "running";
 
   if (!analysis) {
     return (
