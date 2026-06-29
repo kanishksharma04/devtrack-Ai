@@ -4,14 +4,22 @@ import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data: session } = useSession();
   const [syncing, setSyncing] = useState(false);
+  const [lastSynced, setLastSynced] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/account")
+      .then((r) => r.json())
+      .then((d) => { if (d.lastSyncedAt) setLastSynced(d.lastSyncedAt); })
+      .catch(() => {});
+  }, []);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -21,6 +29,7 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
       const data = await res.json();
       if (res.ok && data.success) {
         toast.success("GitHub data synced successfully!", { id: toastId });
+        setLastSynced(new Date().toISOString());
         router.refresh();
       } else {
         toast.error(data.error || "Failed to sync data.", { id: toastId });
@@ -62,6 +71,11 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
       </div>
 
       <div className="flex items-center gap-3 shrink-0">
+        {lastSynced && (
+          <span className="hidden md:block text-[11px] text-[#525252]">
+            Synced {new Date(lastSynced).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+          </span>
+        )}
         <Button
           onClick={handleSync}
           disabled={syncing}

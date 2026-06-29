@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   Lightbulb,
   ExternalLink,
+  Pin,
 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import React from "react";
@@ -26,11 +27,30 @@ export async function generateMetadata({ params }: PublicProfilePageProps) {
   const { username } = await params;
   const user = await prisma.user.findUnique({
     where: { githubUsername: username },
+    include: { portfolioAnalysis: true },
   });
+
   if (!user) return { title: "Profile Not Found" };
+
+  const displayName = user.name || username;
+  const title = `${displayName} — DevTrack AI Portfolio`;
+  const description = user.portfolioAnalysis
+    ? `${displayName} is a ${user.portfolioAnalysis.careerLevel} ${user.portfolioAnalysis.primaryRole} with a portfolio score of ${user.portfolioAnalysis.overallScore}/100. View their AI-powered developer profile on DevTrack AI.`
+    : `View ${displayName}'s developer portfolio, AI code audit scores, and career analysis on DevTrack AI.`;
+
   return {
-    title: `${user.name || username} — DevTrack AI Portfolio`,
-    description: `View ${user.name || username}'s developer portfolio, AI code audit scores, and career analysis on DevTrack AI.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -47,6 +67,10 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
         take: 6,
         include: { insights: true },
       },
+      pinnedRepositories: {
+        orderBy: { order: "asc" },
+        include: { repository: { include: { insights: true } } },
+      },
     },
   });
 
@@ -54,6 +78,7 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
 
   const topLanguages = (user.codingAnalytics?.topLanguages as any[]) || [];
   const hasAnalysis = !!user.portfolioAnalysis;
+  const pinnedRepos = user.pinnedRepositories.map((p) => p.repository);
 
   return (
     <div className="min-h-screen bg-[#090909] text-white">
@@ -181,6 +206,56 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Pinned Repositories */}
+        {pinnedRepos.length >= 1 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Pin className="w-4 h-4 text-[#10B981]" />
+              <h2 className="text-[16px] font-semibold text-white">Pinned</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {pinnedRepos.map((repo) => (
+                <a
+                  key={repo.id}
+                  href={repo.htmlUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group p-5 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-3 hover:border-[rgba(255,255,255,0.12)] transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-[13px] font-semibold text-white group-hover:text-[#10B981] transition-colors truncate">
+                      {repo.name}
+                    </span>
+                    <ExternalLink className="w-3.5 h-3.5 text-[#525252] shrink-0 mt-0.5" />
+                  </div>
+                  {repo.description && (
+                    <p className="text-[12px] text-[#737373] leading-relaxed line-clamp-2">{repo.description}</p>
+                  )}
+                  <div className="flex items-center gap-3 text-[11px] text-[#737373]">
+                    {repo.primaryLanguage && (
+                      <span className="flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+                        {repo.primaryLanguage}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <Star className="w-3 h-3" />{repo.stars}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <GitFork className="w-3 h-3" />{repo.forks}
+                    </span>
+                    {repo.insights && (
+                      <span className="ml-auto text-[#10B981] font-medium">
+                        {repo.insights.codeQualityScore}/100
+                      </span>
+                    )}
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         )}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User, Clock } from "lucide-react";
+import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
 
 interface CareerAdvisorProps {
@@ -89,11 +89,20 @@ export function CareerAdvisor({ userId, initialAnalysis }: CareerAdvisorProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 flex-wrap">
           <div className="text-right">
             <span className="text-[10px] font-medium text-[#737373] uppercase tracking-wide block">Portfolio Health</span>
             <span className="text-[24px] font-semibold text-[#10B981] font-mono">{analysis.overallScore}/100</span>
           </div>
+
+          <a
+            href="/api/export/career"
+            download
+            className="inline-flex items-center gap-2 rounded-[10px] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 px-3 font-medium transition-colors duration-150 text-[#a3a3a3] hover:text-white"
+          >
+            <Download className="w-3 h-3" />
+            Export PDF
+          </a>
 
           <button
             onClick={handleAnalyze}

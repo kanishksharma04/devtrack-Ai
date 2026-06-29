@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RepoListSearch } from "@/components/dashboard/repo-list-search";
+import { PinManager } from "@/components/dashboard/pin-manager";
 import React from "react";
 
 export default async function ReposPage() {
@@ -28,11 +29,16 @@ export default async function ReposPage() {
     stars: repo.stars,
     forks: repo.forks,
     htmlUrl: repo.htmlUrl,
-    insights: repo.insights
-      ? {
-          codeQualityScore: repo.insights.codeQualityScore,
-        }
-      : null,
+    insights: repo.insights ? { codeQualityScore: repo.insights.codeQualityScore } : null,
+  }));
+
+  const allReposForPins = repositories.map((repo) => ({
+    id: repo.id,
+    name: repo.name,
+    description: repo.description,
+    primaryLanguage: repo.primaryLanguage,
+    stars: repo.stars,
+    forks: repo.forks,
   }));
 
   return (
@@ -42,9 +48,11 @@ export default async function ReposPage() {
           All Synced Repositories
         </h2>
         <p className="text-sm text-muted-foreground">
-          View all connected projects and run AI code audits on individual repositories.
+          View all connected projects, manage your pinned profile repos, and run AI code audits.
         </p>
       </div>
+
+      <PinManager allRepos={allReposForPins} />
 
       <RepoListSearch initialRepos={serializedRepos} />
     </div>
