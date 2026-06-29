@@ -17,7 +17,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#090909] text-foreground">
+    <div className="flex h-screen overflow-hidden bg-surface-1 text-foreground">
       {/* Mobile backdrop */}
       <div
         className={cn(
