@@ -55,6 +55,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Return a cached result if one completed within the last 24 h — no Gemini call, no rate limit consumed.
+    const cached = await prisma.analysisJob.findFirst({
+      where: {
+        userId,
+        type,
+        repositoryId: repositoryId ?? null,
+        status: "completed",
+        updatedAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+    if (cached) {
+      return NextResponse.json({ jobId: cached.id, status: "completed", cached: true });
+    }
+
     // Idempotency — return an existing queued/running job for the same resource
     // rather than enqueuing a duplicate that would double-call Gemini.
     const existing = await prisma.analysisJob.findFirst({
