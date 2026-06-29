@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Cpu, RefreshCw, CheckCircle2, ChevronRight, Clock } from "lucide-react";
+import { Cpu, RefreshCw, CheckCircle2, ChevronRight, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
 
 interface RepoDetailAuditProps {
@@ -91,14 +91,24 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
             </span>
           )}
         </div>
-        <button
-          onClick={handleAudit}
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-[10px] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 px-3 font-medium transition-colors duration-150 cursor-pointer text-[#a3a3a3] hover:text-white disabled:opacity-50"
-        >
-          <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
-          {loading ? "Re-auditing..." : "Re-run AI Audit"}
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href={`/api/export/repo/${repoId}`}
+            download
+            className="inline-flex items-center gap-2 rounded-[10px] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 px-3 font-medium transition-colors duration-150 text-[#a3a3a3] hover:text-white"
+          >
+            <Download className="w-3 h-3" />
+            Export PDF
+          </a>
+          <button
+            onClick={handleAudit}
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-[10px] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 px-3 font-medium transition-colors duration-150 cursor-pointer text-[#a3a3a3] hover:text-white disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+            {loading ? "Re-auditing..." : "Re-run AI Audit"}
+          </button>
+        </div>
       </div>
 
       {/* Scores Grid */}
