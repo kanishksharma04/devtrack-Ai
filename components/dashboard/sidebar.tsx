@@ -37,7 +37,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
         className
       )}
     >
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
+      <div className="flex items-center gap-3 px-6 h-16 border-b border-border">
         <Image src="/DevTrackAI_logo.png" alt="DevTrack AI" width={28} height={28} className="rounded-full object-cover" />
         <span className="flex-1 text-[15px] font-semibold tracking-tight">
           DevTrack AI
