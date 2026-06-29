@@ -1,123 +1,262 @@
-<div align="center">
-  <img src="public/logo.png" alt="DevTrack AI Logo" width="120" />
+# DevTrack AI
 
-  <h1 align="center">DevTrack AI</h1>
+A production-grade developer portfolio intelligence platform. Connect your GitHub account to automatically sync repositories, visualise your coding activity, and generate AI-powered career and code-quality insights — all in one dashboard.
 
-  <p align="center">
-    <strong>An AI-powered Career Coach & Portfolio Analyzer for Modern Developers.</strong>
-  </p>
-
-  <p align="center">
-    <a href="https://devtrack-ai-seven.vercel.app">View Live Demo</a>
-    ·
-    <a href="https://github.com/kanishksharma04/devtrack-Ai/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/kanishksharma04/devtrack-Ai/issues">Request Feature</a>
-  </p>
-
-  <p align="center">
-    <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js" />
-    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
-    <img src="https://img.shields.io/badge/Prisma-3982CE?style=flat-square&logo=Prisma&logoColor=white" alt="Prisma" />
-    <img src="https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel" alt="Vercel" />
-  </p>
-</div>
-
-<br />
-
-## 🌟 Overview
-
-**DevTrack AI** is a premium, ultra-modern SaaS platform that syncs directly with your GitHub profile to provide intelligent analytics, automated code audits, and a personalized career progression roadmap. Designed with an aesthetic inspired by Linear and Vercel, it offers an enterprise-grade experience for developers looking to track their growth.
-
-## ✨ Features
-
-- **🧠 AI Code Audits:** Google Gemini analyzes your repositories for code quality, performance structure, documentation, and readability—giving you actionable feedback to improve.
-- **📊 Interactive Analytics:** Explore deep-dive coding statistics, commit velocities, and language focus breakdowns, all synced automatically from your GitHub history.
-- **🗺️ Career Roadmap:** Map out your strengths, weaknesses, and skill gaps to senior engineering levels and receive customized steps to boost your career.
-- **🔐 Seamless Onboarding:** Securely authenticate with your GitHub account using NextAuth.
-- **💎 Premium Flat UI:** A stunning, meticulously crafted dark mode interface featuring Inter typography, flat styling, and a clean, distraction-free environment.
-
-## 🚀 Tech Stack
-
-- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Database ORM:** [Prisma](https://www.prisma.io/)
-- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (GitHub Provider)
-- **AI Integration:** Google Gemini API
-- **Icons:** Lucide React & React Icons
-- **Deployment:** Vercel
-
-## ⚙️ Getting Started
-
-To get a local copy up and running, follow these simple steps.
-
-### Prerequisites
-
-- Node.js (v18+)
-- PostgreSQL Database (e.g., Supabase, Neon, or local)
-- GitHub OAuth Application Credentials
-- Google Gemini API Key
-
-### Installation
-
-1. **Clone the repository**
-   ```sh
-   git clone https://github.com/kanishksharma04/devtrack-Ai.git
-   cd devtrack-ai
-   ```
-
-2. **Install dependencies**
-   ```sh
-   npm install
-   ```
-
-3. **Set up Environment Variables**
-   Create a `.env` file in the root directory and add your keys:
-   ```env
-   # Database (Prisma)
-   DATABASE_URL="your_postgresql_database_url"
-
-   # NextAuth
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your_nextauth_secret"
-
-   # GitHub OAuth
-   GITHUB_CLIENT_ID="your_github_client_id"
-   GITHUB_CLIENT_SECRET="your_github_client_secret"
-
-   # Gemini API
-   GEMINI_API_KEY="your_gemini_api_key"
-   ```
-
-4. **Initialize the Database**
-   ```sh
-   npx prisma generate
-   npx prisma db push
-   ```
-
-5. **Run the Development Server**
-   ```sh
-   npm run dev
-   ```
-
-6. **Open in Browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## 🎨 Design Philosophy
-
-DevTrack AI was built with a strict "Premium Minimalism" design ethos:
-- Complete removal of unnecessary gradients, glows, and glassmorphism.
-- A controlled color palette (`#090909`, `#111111`, `#151515`).
-- Precise typography using Inter.
-- Subtle `#10B981` (Emerald) highlights to guide user attention.
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+**Live:** https://devtrack-ai-seven.vercel.app
 
 ---
 
-<div align="center">
-  <p>Designed and built for elite developers.</p>
-</div>
+## Features
+
+### Dashboard
+- Activity heatmap showing commit frequency across the year
+- Aggregated stats: total commits, languages, starred repos, active streaks
+- Pinned repositories with custom ordering
+- Dark / light theme with system preference detection
+
+### Repositories
+- Syncs up to 50 GitHub repositories per user
+- Per-repo language breakdown with visual charts
+- AI-powered code quality audit: architecture review, security flags, improvement suggestions
+- PDF export of any audit report
+
+### Career Coach
+- AI career advisor powered by Google Gemini — analyses your full portfolio and maps it to career trajectories
+- Identifies strongest skills, skill gaps, and recommended next steps
+- Shareable public portfolio page at `/u/[username]`
+
+### Analytics
+- Recharts-powered visualisations: language distribution, commit trends, repo activity
+
+### Settings
+- Profile management, connected accounts, public portfolio toggle, account deletion
+
+---
+
+## Tech Stack
+
+### Framework & Language
+| Technology | Version | Purpose |
+|---|---|---|
+| [Next.js](https://nextjs.org) | 16.2.9 | Full-stack React framework (App Router) |
+| [TypeScript](https://typescriptlang.org) | 5 | Type safety across the entire codebase |
+| [React](https://react.dev) | 19 | UI library |
+
+### Database & ORM
+| Technology | Version | Purpose |
+|---|---|---|
+| [PostgreSQL](https://postgresql.org) | — | Primary relational database |
+| [Neon](https://neon.tech) | — | Serverless Postgres hosting |
+| [Prisma](https://prisma.io) | 7.8 | ORM, schema management, type-safe queries |
+| [pg](https://node-postgres.com) | 8.22 | Native PostgreSQL adapter |
+
+### Authentication
+| Technology | Version | Purpose |
+|---|---|---|
+| [NextAuth.js](https://next-auth.js.org) | 4.24 | Session management, GitHub OAuth provider |
+
+### AI & Background Jobs
+| Technology | Version | Purpose |
+|---|---|---|
+| [Google Gemini 1.5 Flash](https://ai.google.dev) | — | Portfolio and code quality analysis |
+| [Inngest](https://inngest.com) | 4.11 | Background job queue, step functions, automatic retries |
+
+### Caching & Rate Limiting
+| Technology | Version | Purpose |
+|---|---|---|
+| [Upstash Redis](https://upstash.com) | 1.38 | GitHub API response cache (repos 5 min, languages 1 hr) |
+| [Upstash Ratelimit](https://upstash.com) | 2.0 | Sliding-window rate limiting per user |
+
+### UI & Styling
+| Technology | Version | Purpose |
+|---|---|---|
+| [Tailwind CSS](https://tailwindcss.com) | 4 | Utility-first styling |
+| [shadcn/ui](https://ui.shadcn.com) | 4.12 | Accessible component primitives |
+| [Radix UI](https://radix-ui.com) | 1.6 | Headless UI primitives |
+| [Lucide React](https://lucide.dev) | 1.21 | Icon system |
+| [Recharts](https://recharts.org) | 3.9 | Data visualisation charts |
+| [Sonner](https://sonner.emilkowal.ski) | 2.0 | Toast notifications |
+| [next-themes](https://github.com/pacocoursey/next-themes) | 0.4 | Dark / light theme management |
+
+### Forms & Validation
+| Technology | Version | Purpose |
+|---|---|---|
+| [React Hook Form](https://react-hook-form.com) | 7.80 | Form state management |
+| [Zod](https://zod.dev) | 4.4 | Schema validation |
+
+### Export & Utilities
+| Technology | Version | Purpose |
+|---|---|---|
+| [@react-pdf/renderer](https://react-pdf.org) | 4.5 | PDF export for audit reports |
+| [date-fns](https://date-fns.org) | 4.4 | Date formatting and manipulation |
+
+### Deployment & Infrastructure
+| Technology | Purpose |
+|---|---|
+| [Vercel](https://vercel.com) | Hosting, serverless functions, automatic deployments from GitHub |
+| [Vercel Cron](https://vercel.com/docs/cron-jobs) | Daily background sync of all users at 02:00 UTC |
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                     Browser                          │
+│  Next.js App Router (React Server + Client comps)   │
+└──────────────────────┬──────────────────────────────┘
+                       │
+          ┌────────────▼────────────┐
+          │     Vercel Edge / CDN   │
+          └────────────┬────────────┘
+                       │
+     ┌─────────────────▼─────────────────┐
+     │        Next.js API Routes          │
+     │  /api/sync  /api/analyze           │
+     │  /api/inngest  /api/auth  ...      │
+     └──┬──────────────┬──────────────┬──┘
+        │              │              │
+   ┌────▼────┐   ┌─────▼─────┐  ┌───▼────────┐
+   │  Neon   │   │  Upstash  │  │   Inngest  │
+   │Postgres │   │  Redis    │  │   Queue    │
+   │(Prisma) │   │(cache +   │  │(Gemini AI  │
+   │         │   │rate limit)│  │ jobs)      │
+   └─────────┘   └───────────┘  └────────────┘
+                                       │
+                                  ┌────▼────┐
+                                  │ Google  │
+                                  │ Gemini  │
+                                  └─────────┘
+```
+
+### Key Design Decisions
+
+**Background AI Jobs via Inngest**
+AI analysis runs as a background job rather than blocking the HTTP response. `/api/analyze` returns a `jobId` immediately (HTTP 202). The client polls `/api/analyze/[jobId]` every 2 seconds until the job completes. This prevents serverless timeouts and gives users real-time progress feedback.
+
+**Two-Layer Caching**
+- *GitHub API cache* (Upstash Redis): repos list cached for 5 minutes, language breakdowns for 1 hour. Invalidated on every manual sync.
+- *AI result cache* (PostgreSQL): completed Gemini analysis is reused for 24 hours. Repeated analysis clicks return the cached result instantly without consuming API quota.
+
+**Sliding-Window Rate Limiting**
+Per-user limits enforced at the API layer: 5 AI analyses per hour, 3 GitHub syncs per 10 minutes. Returns standard `X-RateLimit-*` and `Retry-After` headers. Falls back to in-memory limiting if Redis is unavailable.
+
+---
+
+## Project Structure
+
+```
+devtrack-ai/
+├── app/
+│   ├── api/
+│   │   ├── analyze/          # AI job queue (POST enqueue, GET poll by jobId)
+│   │   ├── auth/             # NextAuth handler
+│   │   ├── cron/sync/        # Daily background sync (Vercel Cron)
+│   │   ├── inngest/          # Inngest webhook handler
+│   │   ├── sync/             # Manual GitHub sync
+│   │   └── ...
+│   ├── dashboard/
+│   │   ├── analytics/        # Charts and visualisations
+│   │   ├── career/           # AI career coach
+│   │   ├── repos/            # Repository list and per-repo detail
+│   │   └── settings/         # User preferences
+│   └── u/[username]/         # Public portfolio page
+├── components/
+│   ├── dashboard/            # Shell, sidebar, navbar, page-level components
+│   └── ui/                   # shadcn/ui primitives
+├── lib/
+│   ├── cache/github-cache.ts # Upstash Redis cache helpers
+│   ├── hooks/                # Client-side React hooks (useAnalysisJob)
+│   ├── services/
+│   │   ├── ai.ts             # Gemini API integration
+│   │   └── github.ts         # GitHub API sync logic
+│   ├── inngest.ts            # Inngest client and function definitions
+│   ├── rate-limit.ts         # Upstash sliding-window rate limiter
+│   ├── redis.ts              # Upstash Redis singleton
+│   └── prisma.ts             # Prisma client singleton
+├── prisma/
+│   └── schema.prisma         # Database schema
+└── vercel.json               # Cron job configuration
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js 20+
+- A [GitHub OAuth App](https://github.com/settings/developers)
+- A [Neon](https://neon.tech) PostgreSQL database
+- A [Google AI Studio](https://aistudio.google.com) API key (Gemini)
+- An [Upstash](https://upstash.com) Redis database
+- An [Inngest](https://app.inngest.com) account
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in all values:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | Neon PostgreSQL connection string (`sslmode=verify-full`) |
+| `NEXTAUTH_SECRET` | Random secret for NextAuth (min 32 chars) |
+| `NEXTAUTH_URL` | Your deployment URL |
+| `GITHUB_CLIENT_ID` | GitHub OAuth App client ID |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth App client secret |
+| `GEMINI_API_KEY` | Google AI Studio API key |
+| `CRON_SECRET` | Secret for securing the cron endpoint |
+| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token |
+| `INNGEST_SIGNING_KEY` | Inngest signing key |
+| `INNGEST_EVENT_KEY` | Inngest event key |
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Push database schema
+npm run db:push
+
+# Start the dev server
+npm run dev
+
+# In a separate terminal — runs the Inngest dev server for local background jobs
+npx inngest-cli@latest dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+### Deploy to Vercel
+
+```bash
+npm i -g vercel
+vercel --prod
+```
+
+Add all environment variables in **Vercel → Project → Settings → Environment Variables** before deploying.
+
+After deploying, sync your app with Inngest: go to the [Inngest dashboard](https://app.inngest.com) → **Apps → Sync new** → enter `https://your-app.vercel.app/api/inngest`.
+
+---
+
+## Database Schema
+
+| Model | Purpose |
+|---|---|
+| `User` | GitHub OAuth profile, sync metadata, public portfolio toggle |
+| `Repository` | GitHub repo metadata, language stats, pinned order |
+| `Commit` | Individual commits for the activity heatmap |
+| `CareerAnalysis` | Persisted Gemini portfolio analysis |
+| `RepositoryAnalysis` | Persisted Gemini per-repo code audit |
+| `AnalysisJob` | Background job status tracker (queued → running → completed / failed) |
+
+---
+
+## License
+
+MIT
