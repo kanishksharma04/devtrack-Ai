@@ -46,12 +46,31 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* Surface layers */
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
+  --color-surface-5: var(--surface-5);
+  /* Brand */
+  --color-brand: var(--brand-accent);
+  --color-brand-hover: var(--brand-accent-hover);
+  --color-brand-muted: var(--brand-accent-muted);
+  /* Border utilities */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-medium: var(--border-medium);
+  /* Text scale */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted-custom: var(--text-muted);
+  --color-text-dim: var(--text-dim);
 }
 
+/* ── Light theme (default) ─────────────────────────────────────────── */
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
-  --card: #ffffff;
+  --card: #f9fafb;
   --card-foreground: #0a0a0a;
   --popover: #ffffff;
   --popover-foreground: #0a0a0a;
@@ -59,13 +78,13 @@
   --primary-foreground: #fafafa;
   --secondary: #f5f5f5;
   --secondary-foreground: #171717;
-  --muted: #f5f5f5;
+  --muted: #f0f0f0;
   --muted-foreground: #737373;
   --accent: #f5f5f5;
   --accent-foreground: #171717;
   --destructive: #ef4444;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.08);
   --ring: #a3a3a3;
   --chart-1: #10b981;
   --chart-2: #3b82f6;
@@ -73,16 +92,40 @@
   --chart-4: #ec4899;
   --chart-5: #8b5cf6;
   --radius: 0.625rem;
-  --sidebar: #fafafa;
+  --sidebar: #f4f4f5;
   --sidebar-foreground: #0a0a0a;
-  --sidebar-primary: #171717;
+  --sidebar-primary: #10b981;
   --sidebar-primary-foreground: #fafafa;
-  --sidebar-accent: #f5f5f5;
+  --sidebar-accent: #e4e4e7;
   --sidebar-accent-foreground: #171717;
-  --sidebar-border: #e5e5e5;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
   --sidebar-ring: #a3a3a3;
+
+  /* Surface layers — light */
+  --surface-1: #ffffff;
+  --surface-2: #f9fafb;
+  --surface-3: #f3f4f6;
+  --surface-4: #e5e7eb;
+  --surface-5: #d1d5db;
+
+  /* Borders — light */
+  --border-subtle: rgba(0, 0, 0, 0.07);
+  --border-medium: rgba(0, 0, 0, 0.13);
+
+  /* Text scale — light */
+  --text-primary: #0a0a0a;
+  --text-secondary: #404040;
+  --text-muted: #737373;
+  --text-dim: #a3a3a3;
+
+  /* Brand — same in both themes */
+  --brand-accent: #10b981;
+  --brand-accent-hover: #34d399;
+  --brand-accent-muted: rgba(16, 185, 129, 0.1);
+  --brand-accent-border: rgba(16, 185, 129, 0.2);
 }
 
+/* ── Dark theme ────────────────────────────────────────────────────── */
 .dark {
   --background: #090909;
   --foreground: #fafafa;
@@ -115,6 +158,29 @@
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255, 255, 255, 0.06);
   --sidebar-ring: #525252;
+
+  /* Surface layers — dark */
+  --surface-1: #090909;
+  --surface-2: #111111;
+  --surface-3: #151515;
+  --surface-4: #1a1a1a;
+  --surface-5: #252525;
+
+  /* Borders — dark */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.12);
+
+  /* Text scale — dark */
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --text-dim: #525252;
+
+  /* Brand — same in both themes */
+  --brand-accent: #10b981;
+  --brand-accent-hover: #34d399;
+  --brand-accent-muted: rgba(16, 185, 129, 0.1);
+  --brand-accent-border: rgba(16, 185, 129, 0.2);
 }
 
 @layer base {
@@ -136,22 +202,4 @@
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-}
-
-:root {
-  --brand-accent: #10B981;
-  --brand-accent-hover: #34d399;
-  --brand-accent-muted: rgba(16, 185, 129, 0.1);
-  --brand-accent-border: rgba(16, 185, 129, 0.2);
-  --surface-1: #090909;
-  --surface-2: #111111;
-  --surface-3: #151515;
-  --surface-4: #1a1a1a;
-  --surface-5: #252525;
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --text-primary: #ffffff;
-  --text-secondary: #a3a3a3;
-  --text-muted: #737373;
-  --text-dim: #525252;
 }

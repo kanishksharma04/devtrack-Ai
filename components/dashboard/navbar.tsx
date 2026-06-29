@@ -3,8 +3,9 @@
 import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Menu } from "lucide-react";
+import { RefreshCw, Menu, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +13,7 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data: session } = useSession();
   const [syncing, setSyncing] = useState(false);
   const [lastSynced, setLastSynced] = useState<string | null>(null);
+  const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
 
   useEffect(() => {
@@ -50,21 +52,21 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
     : "DEV";
 
   return (
-    <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-[rgba(255,255,255,0.06)] bg-[#111111] sticky top-0 z-50 shrink-0 pt-safe">
+    <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-border bg-sidebar sticky top-0 z-50 shrink-0 pt-safe">
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <button
           onClick={onMenuClick}
-          className="md:hidden flex items-center justify-center w-10 h-10 shrink-0 rounded-lg text-[#737373] hover:text-white hover:bg-[#1a1a1a] transition-colors"
+          className="md:hidden flex items-center justify-center w-10 h-10 shrink-0 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         <div className="min-w-0">
-          <h1 className="text-[16px] font-semibold text-white tracking-tight truncate">
+          <h1 className="text-[16px] font-semibold tracking-tight truncate">
             Welcome back, {session?.user?.name || "Developer"}
           </h1>
-          <p className="hidden sm:block text-[12px] text-[#737373] mt-0.5">
+          <p className="hidden sm:block text-[12px] text-muted-foreground mt-0.5">
             Analyze your repositories and map your tech career goals.
           </p>
         </div>
@@ -72,25 +74,36 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
 
       <div className="flex items-center gap-3 shrink-0">
         {lastSynced && (
-          <span className="hidden md:block text-[11px] text-[#525252]">
+          <span className="hidden md:block text-[11px] text-text-dim">
             Synced {new Date(lastSynced).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
           </span>
         )}
+
         <Button
           onClick={handleSync}
           disabled={syncing}
           variant="outline"
           size="sm"
-          className="rounded-[10px] border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[13px] h-9 gap-2 font-medium transition-colors duration-150 cursor-pointer text-[#a3a3a3] hover:text-white"
+          data-tour="sync"
+          className="rounded-[10px] border-border bg-muted hover:bg-surface-5 text-[13px] h-9 gap-2 font-medium transition-colors duration-150 cursor-pointer text-muted-foreground hover:text-foreground"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
           <span className="hidden sm:inline">{syncing ? "Syncing..." : "Sync GitHub"}</span>
         </Button>
 
-        <div className="flex items-center gap-2 border-l border-[rgba(255,255,255,0.06)] pl-3">
-          <Avatar className="w-8 h-8 rounded-[10px] border border-[rgba(255,255,255,0.06)]">
+        <button
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          data-tour="theme-toggle"
+          className="flex items-center justify-center w-9 h-9 rounded-[10px] border border-border bg-muted hover:bg-surface-5 text-muted-foreground hover:text-foreground transition-colors duration-150"
+          aria-label="Toggle theme"
+        >
+          {resolvedTheme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </button>
+
+        <div className="flex items-center gap-2 border-l border-border pl-3">
+          <Avatar className="w-8 h-8 rounded-[10px] border border-border">
             <AvatarImage src={session?.user?.image || ""} className="object-cover" />
-            <AvatarFallback className="rounded-[10px] bg-[#1a1a1a] text-[11px] text-[#737373] font-medium">
+            <AvatarFallback className="rounded-[10px] bg-muted text-[11px] text-muted-foreground font-medium">
               {userInitials}
             </AvatarFallback>
           </Avatar>

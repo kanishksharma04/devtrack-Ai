@@ -32,7 +32,7 @@ export function OnboardingSync() {
     <button
       onClick={handleSync}
       disabled={syncing}
-      className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-[10px] bg-white hover:bg-[#e5e5e5] text-[#090909] font-medium transition-colors duration-150 text-[13px] cursor-pointer disabled:opacity-50"
+      className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-[10px] bg-foreground hover:opacity-90 text-background font-medium transition-opacity duration-150 text-[13px] cursor-pointer disabled:opacity-50"
     >
       <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
       {syncing ? "Fetching Repositories..." : "Analyze GitHub Profile"}

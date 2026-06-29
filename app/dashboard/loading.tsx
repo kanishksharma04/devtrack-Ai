@@ -5,7 +5,7 @@ export default function DashboardLoading() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-3">
+          <div key={i} className="p-6 border border-border bg-card rounded-[14px] space-y-3">
             <div className="flex items-center justify-between">
               <Skeleton className="h-3 w-28" />
               <Skeleton className="h-8 w-8 rounded-[10px]" />
@@ -18,7 +18,7 @@ export default function DashboardLoading() {
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-8">
-          <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-6">
+          <div className="p-8 border border-border bg-card rounded-[14px] space-y-6">
             <Skeleton className="h-5 w-48" />
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-3">
@@ -32,7 +32,7 @@ export default function DashboardLoading() {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-3">
+              <div key={i} className="p-6 border border-border bg-card rounded-[14px] space-y-3">
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="h-3 w-full" />
                 <Skeleton className="h-3 w-3/4" />
@@ -45,7 +45,7 @@ export default function DashboardLoading() {
           </div>
         </div>
 
-        <div className="p-8 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-8 border border-border bg-card rounded-[14px] space-y-4">
           <Skeleton className="h-4 w-36" />
           {[...Array(5)].map((_, i) => (
             <div key={i} className="space-y-1.5">

@@ -10,7 +10,7 @@ export default function ReposLoading() {
       <Skeleton className="h-10 w-full rounded-[10px]" />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[...Array(9)].map((_, i) => (
-          <div key={i} className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-3">
+          <div key={i} className="p-6 border border-border bg-card rounded-[14px] space-y-3">
             <div className="flex justify-between items-start">
               <Skeleton className="h-4 w-32" />
               <Skeleton className="h-5 w-16 rounded-full" />

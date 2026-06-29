@@ -8,16 +8,16 @@ export default function AnalyticsLoading() {
         <Skeleton className="h-4 w-72" />
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-6 border border-border bg-card rounded-[14px] space-y-4">
           <Skeleton className="h-4 w-36" />
           <Skeleton className="h-48 w-full rounded-[10px]" />
         </div>
-        <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+        <div className="p-6 border border-border bg-card rounded-[14px] space-y-4">
           <Skeleton className="h-4 w-36" />
           <Skeleton className="h-48 w-full rounded-[10px]" />
         </div>
       </div>
-      <div className="p-6 border border-[rgba(255,255,255,0.06)] bg-[#151515] rounded-[14px] space-y-4">
+      <div className="p-6 border border-border bg-card rounded-[14px] space-y-4">
         <Skeleton className="h-4 w-44" />
         <div className="grid grid-cols-7 gap-1">
           {[...Array(52 * 7)].map((_, i) => (

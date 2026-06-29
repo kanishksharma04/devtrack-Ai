@@ -26,9 +26,9 @@ export function SharePortfolioButton({ username }: SharePortfolioButtonProps) {
   return (
     <button
       onClick={handleShare}
-      className="shrink-0 inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-[#a3a3a3] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] hover:text-white rounded-[10px] transition-colors duration-150 cursor-pointer"
+      className="shrink-0 inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-muted-foreground border border-border bg-muted hover:bg-surface-5 hover:text-foreground rounded-[10px] transition-colors duration-150 cursor-pointer"
     >
-      {copied ? <Check className="w-3.5 h-3.5 text-[#10B981]" /> : <Share2 className="w-3.5 h-3.5" />}
+      {copied ? <Check className="w-3.5 h-3.5 text-brand" /> : <Share2 className="w-3.5 h-3.5" />}
       {copied ? "Copied!" : "Share Portfolio"}
     </button>
   );

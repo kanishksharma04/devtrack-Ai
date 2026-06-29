@@ -16,24 +16,22 @@ export function RepoListSearch({ initialRepos }: RepoListSearchProps) {
   const languages = ["All", ...Array.from(new Set(initialRepos.map((r) => r.primaryLanguage).filter(Boolean)))];
 
   const filteredRepos = initialRepos.filter((repo) => {
-    const matchesSearch = repo.name.toLowerCase().includes(search.toLowerCase()) || 
+    const matchesSearch = repo.name.toLowerCase().includes(search.toLowerCase()) ||
       (repo.description && repo.description.toLowerCase().includes(search.toLowerCase()));
-    
     const matchesLang = selectedLang === "All" || repo.primaryLanguage === selectedLang;
-    
     return matchesSearch && matchesLang;
   });
 
   return (
     <div className="space-y-6 text-foreground">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#151515] p-4 rounded-[14px] border border-[rgba(255,255,255,0.06)]">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-card p-4 rounded-[14px] border border-border">
         <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#737373]" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted-custom" />
           <Input
             placeholder="Search repositories..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 rounded-[10px] bg-[#111111] border-[rgba(255,255,255,0.06)] text-[13px] focus:ring-1 focus:ring-[#10B981] focus:outline-none text-white placeholder:text-[#737373]"
+            className="pl-10 rounded-[10px] bg-surface-2 border-border text-[13px] focus:ring-1 focus:ring-brand focus:outline-none placeholder:text-text-muted-custom"
           />
         </div>
 
@@ -44,8 +42,8 @@ export function RepoListSearch({ initialRepos }: RepoListSearchProps) {
               onClick={() => setSelectedLang(lang)}
               className={`text-[11px] font-medium px-3 py-1.5 rounded-[10px] border transition-colors duration-150 cursor-pointer ${
                 selectedLang === lang
-                  ? "bg-white text-[#090909] border-white"
-                  : "bg-[#1a1a1a] text-[#a3a3a3] border-[rgba(255,255,255,0.06)] hover:text-white"
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-muted text-muted-foreground border-border hover:text-foreground"
               }`}
             >
               {lang}
@@ -61,8 +59,8 @@ export function RepoListSearch({ initialRepos }: RepoListSearchProps) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 border border-dashed border-[rgba(255,255,255,0.06)] rounded-[14px]">
-          <p className="text-[13px] text-[#737373]">No repositories found matching your criteria.</p>
+        <div className="text-center py-12 border border-dashed border-border rounded-[14px]">
+          <p className="text-[13px] text-text-muted-custom">No repositories found matching your criteria.</p>
         </div>
       )}
     </div>
