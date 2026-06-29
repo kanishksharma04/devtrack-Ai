@@ -3,8 +3,9 @@ import { inngest, analyzeFunction } from "@/lib/inngest";
 
 // Inngest verifies the INNGEST_SIGNING_KEY on every incoming webhook call.
 // The key is read automatically from the environment — never hard-code it.
-// Set maxDuration to the Vercel Pro limit so long-running steps don't time out.
-export const maxDuration = 300;
+// 60s is the Vercel Hobby plan ceiling. Inngest calls this endpoint once per
+// step, so each invocation is short even for long-running jobs.
+export const maxDuration = 60;
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
