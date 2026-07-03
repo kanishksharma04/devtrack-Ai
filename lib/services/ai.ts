@@ -85,7 +85,7 @@ Schema structure:
 }
 `;
 
-const GEMINI_TIMEOUT_MS = 45_000;
+const GEMINI_TIMEOUT_MS = process.env.GEMINI_TIMEOUT_MS ? Number(process.env.GEMINI_TIMEOUT_MS) : 45_000;
 
 // Helper to query Gemini API via REST endpoints
 async function callGemini(prompt: string): Promise<string> {
