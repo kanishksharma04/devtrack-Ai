@@ -80,6 +80,20 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
     color: isDark ? "#fff" : "#0a0a0a",
   };
 
+  if (repos.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-16 border border-border bg-card rounded-[14px]">
+        <div className="p-4 rounded-[14px] bg-muted mb-4">
+          <Activity className="w-6 h-6 text-muted-foreground" />
+        </div>
+        <h3 className="text-[15px] font-semibold mb-1">No repositories synced yet</h3>
+        <p className="text-[13px] text-muted-foreground max-w-sm">
+          Sync your GitHub account from the dashboard to see commit activity, language breakdowns, and repo stats here.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 text-foreground">
       {/* Contribution Heatmap */}
