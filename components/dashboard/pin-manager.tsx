@@ -5,6 +5,7 @@ import { GripVertical, Pin, X, Plus, Star, GitFork } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { MAX_PINS } from "@/lib/constants";
 
 interface PinRepo {
   id: string;
@@ -126,7 +127,7 @@ export function PinManager({ allRepos }: PinManagerProps) {
           <Pin className="w-4 h-4 text-brand" />
           <h3 className="text-[14px] font-semibold">Pinned on Profile</h3>
           <span className="text-[11px] text-text-muted-custom bg-muted px-2 py-0.5 rounded-full">
-            {pins.length}/6
+            {pins.length}/{MAX_PINS}
           </span>
         </div>
         {saving && <span className="text-[11px] text-text-muted-custom">Saving…</span>}
@@ -134,7 +135,7 @@ export function PinManager({ allRepos }: PinManagerProps) {
 
       {pins.length === 0 ? (
         <p className="text-[13px] text-text-muted-custom py-2">
-          No repos pinned yet. Pin up to 6 to highlight them on your public profile.
+          No repos pinned yet. Pin up to {MAX_PINS} to highlight them on your public profile.
         </p>
       ) : (
         <ul className="space-y-2">
@@ -176,7 +177,7 @@ export function PinManager({ allRepos }: PinManagerProps) {
         </ul>
       )}
 
-      {pins.length < 6 && (
+      {pins.length < MAX_PINS && (
         <div className="relative">
           <button
             onClick={() => setShowAdd((s) => !s)}

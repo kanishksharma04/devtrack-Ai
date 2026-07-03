@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-const MAX_PINS = 6;
+import { MAX_PINS } from "@/lib/constants";
 
 export async function GET() {
   try {
