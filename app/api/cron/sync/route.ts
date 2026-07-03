@@ -35,6 +35,5 @@ export async function GET(request: Request) {
     await new Promise((r) => setTimeout(r, 500));
   }
 
-  console.log(`[cron/sync] Done: synced=${results.synced} failed=${results.failed} skipped=${results.skipped}`);
   return NextResponse.json({ success: true, ...results });
 }
