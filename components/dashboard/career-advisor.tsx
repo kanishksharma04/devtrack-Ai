@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
