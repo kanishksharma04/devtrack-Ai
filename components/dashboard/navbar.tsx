@@ -102,7 +102,11 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
 
         <div className="flex items-center gap-2 border-l border-border pl-3">
           <Avatar className="w-8 h-8 rounded-[10px] border border-border">
-            <AvatarImage src={session?.user?.image || ""} className="object-cover" />
+            <AvatarImage
+              src={session?.user?.image || ""}
+              alt={session?.user?.name ? `${session.user.name}'s avatar` : "User avatar"}
+              className="object-cover"
+            />
             <AvatarFallback className="rounded-[10px] bg-muted text-[11px] text-muted-foreground font-medium">
               {userInitials}
             </AvatarFallback>
