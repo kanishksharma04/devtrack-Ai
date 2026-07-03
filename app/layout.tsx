@@ -21,6 +21,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
   title: "DevTrack AI - AI Developer Career Dashboard",
   description: "Connect GitHub to receive AI-powered portfolio reviews, career pathing, repository insights, and coding analytics.",
 };
