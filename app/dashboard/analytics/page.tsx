@@ -14,14 +14,10 @@ export default async function AnalyticsPage() {
 
   const userId = (session.user as any).id;
 
-  const analytics = await prisma.codingAnalytics.findUnique({
-    where: { userId },
-  });
-
-  const repositories = await prisma.repository.findMany({
-    where: { userId },
-    orderBy: { stars: "desc" },
-  });
+  const [analytics, repositories] = await Promise.all([
+    prisma.codingAnalytics.findUnique({ where: { userId } }),
+    prisma.repository.findMany({ where: { userId }, orderBy: { stars: "desc" } }),
+  ]);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto text-foreground">
