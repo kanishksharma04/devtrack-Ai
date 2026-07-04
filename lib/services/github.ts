@@ -9,6 +9,10 @@ import {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+function formatMonthKey(date: Date): string {
+  return date.toLocaleString("default", { month: "short", year: "2-digit" });
+}
+
 interface GitHubRepoResponse {
   id: number;
   name: string;
@@ -178,7 +182,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     const now = new Date();
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthKey = d.toLocaleString("default", { month: "short", year: "2-digit" });
+      const monthKey = formatMonthKey(d);
       commitsPerMonth[monthKey] = 0;
     }
 
@@ -202,7 +206,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         commitsPerDay[dateStr] = commitCount;
         totalCommits += commitCount;
         
-        const monthKey = d.toLocaleString("default", { month: "short", year: "2-digit" });
+        const monthKey = formatMonthKey(d);
         if (monthKey in commitsPerMonth) {
           commitsPerMonth[monthKey] += commitCount;
         }
@@ -303,7 +307,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
   const now = new Date();
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const monthKey = d.toLocaleString("default", { month: "short", year: "2-digit" });
+    const monthKey = formatMonthKey(d);
     commitsPerMonth[monthKey] = 0;
   }
 
@@ -414,7 +418,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
           commitsPerDay[dateStr] = (commitsPerDay[dateStr] || 0) + 1;
 
           const commitDate = new Date(c.commit.author.date);
-          const monthKey = commitDate.toLocaleString("default", { month: "short", year: "2-digit" });
+          const monthKey = formatMonthKey(commitDate);
           if (monthKey in commitsPerMonth) {
             commitsPerMonth[monthKey] += 1;
           }
