@@ -26,18 +26,21 @@ export default async function DashboardPage() {
 
   const userId = (session.user as any).id;
 
-  const dbUser = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      repositories: {
-        take: 3,
-        orderBy: { pushedAt: "desc" },
-        include: { insights: true },
+  const [dbUser, totalReposCount] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        repositories: {
+          take: 3,
+          orderBy: { pushedAt: "desc" },
+          include: { insights: true },
+        },
+        codingAnalytics: true,
+        portfolioAnalysis: true,
       },
-      codingAnalytics: true,
-      portfolioAnalysis: true,
-    },
-  });
+    }),
+    prisma.repository.count({ where: { userId } }),
+  ]);
 
   if (!dbUser) redirect("/");
 
@@ -60,7 +63,6 @@ export default async function DashboardPage() {
     );
   }
 
-  const totalReposCount = await prisma.repository.count({ where: { userId } });
   const totalCommits = dbUser.codingAnalytics?.totalCommits || 0;
   const totalStars = dbUser.codingAnalytics?.totalStars || 0;
   const totalForks = dbUser.codingAnalytics?.totalForks || 0;
