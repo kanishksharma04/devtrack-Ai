@@ -7,6 +7,8 @@ import {
   invalidateUserReposCache,
 } from "../cache/github-cache";
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 interface GitHubRepoResponse {
   id: number;
   name: string;
@@ -71,7 +73,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         size: 1420,
         openIssues: 4,
         isPrivate: false,
-        pushedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        pushedAt: new Date(Date.now() - 2 * DAY_MS).toISOString(),
       },
       {
         id: 102,
@@ -85,7 +87,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         size: 3200,
         openIssues: 12,
         isPrivate: false,
-        pushedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+        pushedAt: new Date(Date.now() - 4 * DAY_MS).toISOString(),
       },
       {
         id: 103,
@@ -99,7 +101,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         size: 890,
         openIssues: 1,
         isPrivate: false,
-        pushedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        pushedAt: new Date(Date.now() - 15 * DAY_MS).toISOString(),
       },
       {
         id: 104,
@@ -113,7 +115,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         size: 1120,
         openIssues: 6,
         isPrivate: false,
-        pushedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        pushedAt: new Date(Date.now() - 30 * DAY_MS).toISOString(),
       }
     ];
 
