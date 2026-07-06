@@ -23,13 +23,21 @@ A production-grade developer portfolio intelligence platform. Connect your GitHu
 ### Career Coach
 - AI career advisor powered by Google Gemini — analyses your full portfolio and maps it to career trajectories
 - Identifies strongest skills, skill gaps, and recommended next steps
-- Shareable public portfolio page at `/u/[username]`
+- Shareable public portfolio page at `/u/[username]` with dynamic OG image generation for social previews
 
 ### Analytics
 - Recharts-powered visualisations: language distribution, commit trends, repo activity
+- Parallelised data fetching (user, repo-count, and analytics queries run concurrently) for faster page loads
+- Empty state shown when no repositories have been synced yet
 
 ### Settings
 - Profile management, connected accounts, public portfolio toggle, account deletion
+- Loading skeleton while preferences are fetched
+
+### SEO & PWA
+- `robots.ts` disallows crawling of private/authenticated routes
+- `sitemap.ts` exposes public routes for search engines
+- `theme-color` meta tags adapt to light/dark mode for mobile browser chrome
 
 ---
 
@@ -207,9 +215,12 @@ cp .env.example .env
 | `GITHUB_CLIENT_ID` | GitHub OAuth App client ID |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth App client secret |
 | `GEMINI_API_KEY` | Google AI Studio API key |
+| `GEMINI_TIMEOUT_MS` | Gemini request timeout in ms (optional, defaults to `45000`) |
 | `CRON_SECRET` | Secret for securing the cron endpoint |
 | `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token |
+| `RATE_LIMIT_ANALYZE_PER_HOUR` | Max Gemini calls per user per hour (optional, defaults to `5`) |
+| `RATE_LIMIT_SYNC_PER_10MIN` | Max GitHub sync calls per user per 10 min (optional, defaults to `3`) |
 | `INNGEST_SIGNING_KEY` | Inngest signing key |
 | `INNGEST_EVENT_KEY` | Inngest event key |
 
