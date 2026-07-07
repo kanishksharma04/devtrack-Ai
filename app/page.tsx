@@ -52,8 +52,8 @@ export default async function Home({
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 text-left w-full pt-12">
-          <div className="p-6 border border-border bg-card rounded-[14px] space-y-3">
-            <div className="p-2 w-fit bg-brand-muted border border-brand-border text-brand rounded-[10px]">
+          <div className="p-6 border border-border bg-card rounded-lg space-y-3 transition-colors hover:bg-surface-2">
+            <div className="p-2 w-fit bg-brand-muted border border-brand-border text-brand rounded-lg">
               <Cpu className="w-5 h-5" />
             </div>
             <h3 className="font-bold text-[14px]">AI Code Audits</h3>
@@ -62,8 +62,8 @@ export default async function Home({
             </p>
           </div>
 
-          <div className="p-6 border border-border bg-card rounded-[14px] space-y-3">
-            <div className="p-2 w-fit bg-chart-2/10 border border-chart-2/20 text-chart-2 rounded-[10px]">
+          <div className="p-6 border border-border bg-card rounded-lg space-y-3 transition-colors hover:bg-surface-2">
+            <div className="p-2 w-fit bg-chart-2/10 border border-chart-2/20 text-chart-2 rounded-lg">
               <LineChart className="w-5 h-5" />
             </div>
             <h3 className="font-bold text-[14px]">Interactive Analytics</h3>
@@ -72,8 +72,8 @@ export default async function Home({
             </p>
           </div>
 
-          <div className="p-6 border border-border bg-card rounded-[14px] space-y-3 sm:col-span-2 lg:col-span-1">
-            <div className="p-2 w-fit bg-chart-5/10 border border-chart-5/20 text-chart-5 rounded-[10px]">
+          <div className="p-6 border border-border bg-card rounded-lg space-y-3 sm:col-span-2 lg:col-span-1 transition-colors hover:bg-surface-2">
+            <div className="p-2 w-fit bg-chart-5/10 border border-chart-5/20 text-chart-5 rounded-lg">
               <Compass className="w-5 h-5" />
             </div>
             <h3 className="font-bold text-[14px]">Career Roadmap</h3>
