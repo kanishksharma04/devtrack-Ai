@@ -19,14 +19,14 @@ export default function NotFound() {
       <div className="flex items-center gap-3">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-medium bg-foreground text-background hover:opacity-90 rounded-[10px] transition-opacity duration-150"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-medium bg-brand text-white hover:bg-brand-hover rounded-lg transition-colors duration-150"
         >
           <Home className="w-3.5 h-3.5" />
           Go to Dashboard
         </Link>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-medium text-muted-foreground border border-border bg-muted hover:bg-surface-5 hover:text-foreground rounded-[10px] transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-medium text-muted-foreground border border-border bg-muted hover:bg-surface-5 hover:text-foreground rounded-lg transition-colors duration-150"
         >
           <Search className="w-3.5 h-3.5" />
           Home
