@@ -16,9 +16,26 @@ import {
 import { Activity, Code, Star } from "lucide-react";
 import { useTheme } from "next-themes";
 
+interface CommitMonth {
+  month: string;
+  commits: number;
+}
+
+interface LanguageStat {
+  name: string;
+  bytes: number;
+  percentage: number;
+}
+
+interface AnalyticsData {
+  commitsPerMonth?: CommitMonth[] | null;
+  topLanguages?: LanguageStat[] | null;
+  dailyContributions?: Record<string, number> | null;
+}
+
 interface AnalyticsClientProps {
-  analytics: any;
-  repos: any[];
+  analytics: AnalyticsData | null;
+  repos: { name: string; stars: number }[];
 }
 
 export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
@@ -26,7 +43,7 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
   const isDark = resolvedTheme !== "light";
 
   const commitData = analytics?.commitsPerMonth || [];
-  const languageData = (analytics?.topLanguages as any[]) || [];
+  const languageData = analytics?.topLanguages || [];
   const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ec4899", "#8b5cf6", "#06b6d4", "#ef4444", "#14b8a6"];
 
   const repoData = repos
@@ -192,7 +209,10 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value: any) => [`${(value / 1024).toFixed(1)} KB`]} contentStyle={tooltipStyle} />
+                      <Tooltip
+                        formatter={(value) => [`${(Number(value) / 1024).toFixed(1)} KB`]}
+                        contentStyle={tooltipStyle}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>

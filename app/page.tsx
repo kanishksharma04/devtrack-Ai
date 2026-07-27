@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionWithAccessToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LoginButton } from "@/components/login-button";
 import { Compass, Cpu, LineChart } from "lucide-react";
@@ -13,9 +12,8 @@ export default async function Home({
 }: {
   searchParams?: Promise<{ error?: string }>;
 }) {
-  const session = await getServerSession(authOptions);
-
-  if (session && (session as any).accessToken) {
+  const sessionWithToken = await getSessionWithAccessToken();
+  if (sessionWithToken) {
     redirect("/dashboard");
   }
 

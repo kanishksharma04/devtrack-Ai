@@ -1,18 +1,12 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AnalyticsClient } from "@/components/dashboard/analytics-client";
 import React from "react";
 
 export default async function AnalyticsPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !(session.user as any).id) {
-    redirect("/");
-  }
-
-  const userId = (session.user as any).id;
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/");
 
   const [analytics, repositories] = await Promise.all([
     prisma.codingAnalytics.findUnique({ where: { userId } }),
@@ -30,7 +24,18 @@ export default async function AnalyticsPage() {
         </p>
       </div>
 
-      <AnalyticsClient analytics={analytics} repos={repositories} />
+      <AnalyticsClient
+        analytics={
+          analytics
+            ? {
+                commitsPerMonth: analytics.commitsPerMonth as { month: string; commits: number }[] | null,
+                topLanguages: analytics.topLanguages as { name: string; bytes: number; percentage: number }[] | null,
+                dailyContributions: analytics.dailyContributions as Record<string, number> | null,
+              }
+            : null
+        }
+        repos={repositories}
+      />
     </div>
   );
 }

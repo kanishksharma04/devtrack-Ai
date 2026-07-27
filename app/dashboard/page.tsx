@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -18,13 +17,8 @@ import Link from "next/link";
 import React from "react";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !(session.user as any).id) {
-    redirect("/");
-  }
-
-  const userId = (session.user as any).id;
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/");
 
   const [dbUser, totalReposCount] = await Promise.all([
     prisma.user.findUnique({
@@ -196,7 +190,7 @@ export default async function DashboardPage() {
             <h3 className="text-[14px] font-semibold mb-6">Language breakdown</h3>
             {dbUser.codingAnalytics?.topLanguages ? (
               <div className="space-y-4">
-                {(dbUser.codingAnalytics.topLanguages as any[]).slice(0, 5).map((lang, idx) => (
+                {(dbUser.codingAnalytics.topLanguages as { name: string; percentage: number }[]).slice(0, 5).map((lang, idx) => (
                   <div key={idx} className="space-y-1.5">
                     <div className="flex items-center justify-between text-[12px]">
                       <span className="font-medium">{lang.name}</span>

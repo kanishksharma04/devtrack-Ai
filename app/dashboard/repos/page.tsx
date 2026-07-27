@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RepoListSearch } from "@/components/dashboard/repo-list-search";
@@ -7,13 +6,8 @@ import { PinManager } from "@/components/dashboard/pin-manager";
 import React from "react";
 
 export default async function ReposPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !(session.user as any).id) {
-    redirect("/");
-  }
-
-  const userId = (session.user as any).id;
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/");
 
   const repositories = await prisma.repository.findMany({
     where: { userId },

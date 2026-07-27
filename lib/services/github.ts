@@ -1,4 +1,5 @@
 import { prisma } from "../prisma";
+import type { Prisma } from "../generated/prisma";
 import {
   getCachedRepos,
   setCachedRepos,
@@ -34,15 +35,6 @@ interface GitHubCommitResponse {
     author: {
       date: string;
     };
-  };
-}
-
-// Custom serialization function to resolve BigInt JSON response failures
-export function serializeDbRepo(repo: any) {
-  if (!repo) return null;
-  return {
-    ...repo,
-    githubId: repo.githubId ? repo.githubId.toString() : null,
   };
 }
 
@@ -148,7 +140,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
           stars: repo.stars,
           forks: repo.forks,
           primaryLanguage: repo.primaryLanguage,
-          languages: repo.languages as any,
+          languages: repo.languages as Prisma.InputJsonValue,
           size: repo.size,
           openIssues: repo.openIssues,
           isPrivate: repo.isPrivate,
@@ -165,7 +157,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
           stars: repo.stars,
           forks: repo.forks,
           primaryLanguage: repo.primaryLanguage,
-          languages: repo.languages as any,
+          languages: repo.languages as Prisma.InputJsonValue,
           size: repo.size,
           openIssues: repo.openIssues,
           isPrivate: repo.isPrivate,
@@ -231,9 +223,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       where: { userId },
       update: {
         totalCommits,
-        commitsPerMonth: commitsPerMonthChart as any,
-        dailyContributions: commitsPerDay as any,
-        topLanguages: topLanguages as any,
+        commitsPerMonth: commitsPerMonthChart as Prisma.InputJsonValue,
+        dailyContributions: commitsPerDay as Prisma.InputJsonValue,
+        topLanguages: topLanguages as Prisma.InputJsonValue,
         totalStars,
         totalForks,
         lastSyncedAt: new Date(),
@@ -241,9 +233,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       create: {
         userId,
         totalCommits,
-        commitsPerMonth: commitsPerMonthChart as any,
-        dailyContributions: commitsPerDay as any,
-        topLanguages: topLanguages as any,
+        commitsPerMonth: commitsPerMonthChart as Prisma.InputJsonValue,
+        dailyContributions: commitsPerDay as Prisma.InputJsonValue,
+        topLanguages: topLanguages as Prisma.InputJsonValue,
         totalStars,
         totalForks,
         lastSyncedAt: new Date(),
@@ -360,7 +352,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         stars: repo.stargazers_count,
         forks: repo.forks_count,
         primaryLanguage: repo.language,
-        languages: languages as any,
+        languages: languages as Prisma.InputJsonValue,
         size: repo.size,
         openIssues: repo.open_issues_count,
         isPrivate: repo.private,
@@ -377,7 +369,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
         stars: repo.stargazers_count,
         forks: repo.forks_count,
         primaryLanguage: repo.language,
-        languages: languages as any,
+        languages: languages as Prisma.InputJsonValue,
         size: repo.size,
         openIssues: repo.open_issues_count,
         isPrivate: repo.private,
@@ -450,9 +442,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     where: { userId },
     update: {
       totalCommits,
-      commitsPerMonth: commitsPerMonthChart as any,
-      dailyContributions: commitsPerDay as any,
-      topLanguages: topLanguages as any,
+      commitsPerMonth: commitsPerMonthChart as Prisma.InputJsonValue,
+      dailyContributions: commitsPerDay as Prisma.InputJsonValue,
+      topLanguages: topLanguages as Prisma.InputJsonValue,
       totalStars,
       totalForks,
       lastSyncedAt: new Date(),
@@ -460,9 +452,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     create: {
       userId,
       totalCommits,
-      commitsPerMonth: commitsPerMonthChart as any,
-      dailyContributions: commitsPerDay as any,
-      topLanguages: topLanguages as any,
+      commitsPerMonth: commitsPerMonthChart as Prisma.InputJsonValue,
+      dailyContributions: commitsPerDay as Prisma.InputJsonValue,
+      topLanguages: topLanguages as Prisma.InputJsonValue,
       totalStars,
       totalForks,
       lastSyncedAt: new Date(),

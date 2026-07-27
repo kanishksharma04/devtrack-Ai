@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { RepoDetailAudit } from "@/components/dashboard/repo-detail-audit";
@@ -12,11 +11,8 @@ interface RepoDetailPageProps {
 }
 
 export default async function RepoDetailPage({ params }: RepoDetailPageProps) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !(session.user as any).id) {
-    redirect("/");
-  }
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/");
 
   const { id } = await params;
 
@@ -25,7 +21,7 @@ export default async function RepoDetailPage({ params }: RepoDetailPageProps) {
     include: { insights: true },
   });
 
-  if (!repo || repo.userId !== (session.user as any).id) {
+  if (!repo || repo.userId !== userId) {
     redirect("/dashboard/repos");
   }
 
@@ -45,8 +41,8 @@ export default async function RepoDetailPage({ params }: RepoDetailPageProps) {
           securityScore: repo.insights.securityScore,
           readabilityScore: repo.insights.readabilityScore,
           summary: repo.insights.summary,
-          highlights: repo.insights.highlights,
-          recommendations: repo.insights.recommendations,
+          highlights: repo.insights.highlights as string[],
+          recommendations: repo.insights.recommendations as string[],
         }
       : null,
   };

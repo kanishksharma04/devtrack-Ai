@@ -3,33 +3,35 @@
 import { Badge } from "@/components/ui/badge";
 import { Star, GitFork, ArrowUpRight, ShieldAlert, Cpu } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
 
+export interface RepoCardRepo {
+  id: string;
+  name: string;
+  description: string | null;
+  primaryLanguage: string | null;
+  stars: number;
+  forks: number;
+  htmlUrl: string;
+  insights?: {
+    codeQualityScore: number;
+  } | null;
+}
+
 interface RepoCardProps {
-  repo: {
-    id: string;
-    name: string;
-    description: string | null;
-    primaryLanguage: string | null;
-    stars: number;
-    forks: number;
-    htmlUrl: string;
-    insights?: {
-      codeQualityScore: number;
-    } | null;
-  };
+  repo: RepoCardRepo;
 }
 
 export function RepoCard({ repo }: RepoCardProps) {
-  const [insight, setInsight] = useState(repo.insights);
   const job = useAnalysisJob();
   const toastRef = useRef<string | number | null>(null);
+  const insight: { codeQualityScore: number } | null | undefined =
+    job.status === "completed" && job.data ? job.data : repo.insights;
 
   useEffect(() => {
     if (job.status === "completed" && job.data) {
-      setInsight(job.data);
       if (toastRef.current !== null) toast.success("Audit complete!", { id: toastRef.current });
     } else if (job.status === "failed") {
       if (toastRef.current !== null) toast.error(job.error || "Audit failed.", { id: toastRef.current });

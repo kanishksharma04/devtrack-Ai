@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { RepoCard } from "./repo-card";
+import { RepoCard, type RepoCardRepo } from "./repo-card";
 import { Search } from "lucide-react";
 
 interface RepoListSearchProps {
-  initialRepos: any[];
+  initialRepos: RepoCardRepo[];
 }
 
 export function RepoListSearch({ initialRepos }: RepoListSearchProps) {
   const [search, setSearch] = useState("");
   const [selectedLang, setSelectedLang] = useState("All");
 
-  const languages = ["All", ...Array.from(new Set(initialRepos.map((r) => r.primaryLanguage).filter(Boolean)))];
+  const languages = [
+    "All",
+    ...Array.from(
+      new Set(initialRepos.map((r) => r.primaryLanguage).filter((l): l is string => Boolean(l)))
+    ),
+  ];
 
   const filteredRepos = initialRepos.filter((repo) => {
     const matchesSearch = repo.name.toLowerCase().includes(search.toLowerCase()) ||

@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { CareerAdvisor } from "@/components/dashboard/career-advisor";
@@ -7,13 +6,8 @@ import { SharePortfolioButton } from "@/components/dashboard/share-portfolio-but
 import React from "react";
 
 export default async function CareerPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || !(session.user as any).id) {
-    redirect("/");
-  }
-
-  const userId = (session.user as any).id;
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/");
 
   const [analysis, user] = await Promise.all([
     prisma.portfolioAnalysis.findUnique({ where: { userId } }),
@@ -36,7 +30,21 @@ export default async function CareerPage() {
         )}
       </div>
 
-      <CareerAdvisor userId={userId} initialAnalysis={analysis} />
+      <CareerAdvisor
+        initialAnalysis={
+          analysis
+            ? {
+                updatedAt: analysis.updatedAt,
+                primaryRole: analysis.primaryRole,
+                careerLevel: analysis.careerLevel,
+                overallScore: analysis.overallScore,
+                strengths: analysis.strengths as string[],
+                weakAreas: analysis.weakAreas as string[],
+                careerRecommendations: analysis.careerRecommendations as string[],
+              }
+            : null
+        }
+      />
     </div>
   );
 }

@@ -78,11 +78,3 @@ export async function invalidateUserReposCache(userId: string): Promise<void> {
     console.warn("[github-cache] invalidateUserReposCache error:", err);
   }
 }
-
-/** Debug helper — returns hit/miss counts for observability. Not called in prod paths. */
-export async function cacheDebugInfo(userId: string) {
-  const redis = getRedis();
-  if (!redis) return { redis: false };
-  const reposTtl = await redis.ttl(reposKey(userId)).catch(() => -2);
-  return { redis: true, repos_ttl_seconds: reposTtl };
-}

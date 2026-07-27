@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MAX_PINS } from "@/lib/constants";
+import { getErrorCode, getErrorMessage } from "@/lib/utils";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = (session.user as any).id;
 
     const pins = await prisma.pinnedRepository.findMany({
       where: { userId },
@@ -31,18 +30,17 @@ export async function GET() {
     });
 
     return NextResponse.json({ pins });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed." }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: getErrorMessage(error, "Failed.") }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = (session.user as any).id;
 
     const { repositoryId } = await request.json();
     if (!repositoryId || typeof repositoryId !== "string") {
@@ -68,10 +66,10 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, pin });
-  } catch (error: any) {
-    if (error.code === "P2002") {
+  } catch (error) {
+    if (getErrorCode(error) === "P2002") {
       return NextResponse.json({ error: "Repository is already pinned." }, { status: 409 });
     }
-    return NextResponse.json({ error: error.message || "Failed." }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error, "Failed.") }, { status: 500 });
   }
 }

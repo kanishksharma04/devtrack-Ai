@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { checkAnalyzeLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 import { inngest } from "@/lib/inngest";
@@ -25,11 +24,10 @@ function rateLimitHeaders(result: {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
     }
-    const userId = (session.user as any).id as string;
 
     const rl = await checkAnalyzeLimit(userId);
     if (!rl.success) {
@@ -102,7 +100,7 @@ export async function POST(req: Request) {
       { jobId: job.id, status: "queued" },
       { status: 202, headers: rateLimitHeaders(rl) }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("[api/analyze] error:", error);
     return NextResponse.json(
       { error: "Failed to enqueue analysis job." },

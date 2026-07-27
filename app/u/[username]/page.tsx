@@ -23,6 +23,11 @@ interface PublicProfilePageProps {
   params: Promise<{ username: string }>;
 }
 
+interface LanguageStat {
+  name: string;
+  percentage: number;
+}
+
 export async function generateMetadata({ params }: PublicProfilePageProps) {
   const { username } = await params;
   const user = await prisma.user.findUnique({
@@ -68,7 +73,7 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
 
   if (!user || !user.isPublicProfile) notFound();
 
-  const topLanguages = (user.codingAnalytics?.topLanguages as any[]) || [];
+  const topLanguages = (user.codingAnalytics?.topLanguages as LanguageStat[] | null) || [];
   const hasAnalysis = !!user.portfolioAnalysis;
   const pinnedRepos = user.pinnedRepositories.map((p) => p.repository);
 
@@ -149,7 +154,7 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
           <div className="p-6 border border-border bg-card rounded-[14px] space-y-4">
             <h2 className="text-[14px] font-semibold">Language Breakdown</h2>
             <div className="space-y-3">
-              {topLanguages.slice(0, 6).map((lang: any, idx: number) => (
+              {topLanguages.slice(0, 6).map((lang, idx) => (
                 <div key={idx} className="space-y-1.5">
                   <div className="flex justify-between text-[12px]">
                     <span className="font-medium">{lang.name}</span>

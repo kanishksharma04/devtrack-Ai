@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionWithAccessToken } from "@/lib/auth";
 import { syncGitHubData } from "@/lib/services/github";
 import { checkSyncLimit } from "@/lib/rate-limit";
+import { getErrorMessage } from "@/lib/utils";
 
 function rateLimitHeaders(result: {
   limit?: number;
@@ -20,15 +20,14 @@ function rateLimitHeaders(result: {
 
 export async function POST() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !(session as any).accessToken || !session.user || !(session.user as any).id) {
+    const sessionWithToken = await getSessionWithAccessToken();
+    if (!sessionWithToken) {
       return NextResponse.json(
         { error: "Unauthorized. Please sign in and connect GitHub." },
         { status: 401 }
       );
     }
-
-    const userId = (session.user as any).id as string;
+    const { userId, accessToken } = sessionWithToken;
 
     const rl = await checkSyncLimit(userId);
     if (!rl.success) {
@@ -39,17 +38,16 @@ export async function POST() {
     }
 
     // Cache invalidation happens inside syncGitHubData before fetching.
-    const accessToken = (session as any).accessToken as string;
     const result = await syncGitHubData(userId, accessToken);
 
     return NextResponse.json(
       { success: true, message: "GitHub data synced successfully.", data: result },
       { headers: rateLimitHeaders(rl) }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("GitHub Sync API Error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to sync GitHub data." },
+      { error: getErrorMessage(error, "Failed to sync GitHub data.") },
       { status: 500 }
     );
   }

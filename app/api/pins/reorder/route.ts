@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getErrorMessage } from "@/lib/utils";
 
 export async function PUT(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = (session.user as any).id;
 
     const { orderedIds } = await request.json();
     if (!Array.isArray(orderedIds) || orderedIds.some((id) => typeof id !== "string")) {
@@ -36,7 +35,7 @@ export async function PUT(request: Request) {
     );
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed." }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: getErrorMessage(error, "Failed.") }, { status: 500 });
   }
 }

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { pdf } from "@react-pdf/renderer";
 import type { DocumentProps } from "@react-pdf/renderer";
 import { RepoAuditPDF } from "@/lib/pdf/repo-audit-pdf";
+import { getErrorMessage } from "@/lib/utils";
 import React from "react";
 
 export const dynamic = "force-dynamic";
@@ -22,11 +22,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = (session.user as any).id;
     const { id } = await params;
 
     const repo = await prisma.repository.findUnique({
@@ -68,8 +67,8 @@ export async function GET(
         "Cache-Control": "no-store",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[export/repo]", error);
-    return NextResponse.json({ error: error.message || "Failed to generate PDF." }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error, "Failed to generate PDF.") }, { status: 500 });
   }
 }

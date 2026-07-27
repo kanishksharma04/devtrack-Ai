@@ -1,23 +1,32 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Compass, RefreshCw, CheckCircle2, AlertTriangle, Lightbulb, User, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
 
-interface CareerAdvisorProps {
-  userId: string;
-  initialAnalysis: any;
+interface PortfolioAnalysisData {
+  updatedAt?: string | Date;
+  primaryRole: string;
+  careerLevel: string;
+  overallScore: number;
+  strengths: string[];
+  weakAreas: string[];
+  careerRecommendations: string[];
 }
 
-export function CareerAdvisor({ userId: _userId, initialAnalysis }: CareerAdvisorProps) {
-  const [analysis, setAnalysis] = useState(initialAnalysis);
+interface CareerAdvisorProps {
+  initialAnalysis: PortfolioAnalysisData | null;
+}
+
+export function CareerAdvisor({ initialAnalysis }: CareerAdvisorProps) {
   const job = useAnalysisJob();
   const toastRef = useRef<string | number | null>(null);
+  const analysis: PortfolioAnalysisData | null =
+    job.status === "completed" && job.data ? job.data : initialAnalysis;
 
   useEffect(() => {
     if (job.status === "completed" && job.data) {
-      setAnalysis(job.data);
       if (toastRef.current !== null) toast.success("Career roadmap generated!", { id: toastRef.current });
     } else if (job.status === "failed") {
       if (toastRef.current !== null) toast.error(job.error || "Analysis failed.", { id: toastRef.current });
@@ -127,7 +136,7 @@ export function CareerAdvisor({ userId: _userId, initialAnalysis }: CareerAdviso
             <h3 className="text-[14px] font-semibold">Core Strengths</h3>
           </div>
           <ul className="space-y-3.5">
-            {(analysis.strengths as string[]).map((strength, idx) => (
+            {analysis.strengths.map((strength, idx) => (
               <li key={idx} className="flex gap-3 items-start text-[13px] text-muted-foreground leading-relaxed">
                 <span className="text-brand">✓</span>
                 <span>{strength}</span>
@@ -142,7 +151,7 @@ export function CareerAdvisor({ userId: _userId, initialAnalysis }: CareerAdviso
             <h3 className="text-[14px] font-semibold">Gaps & Weak Areas</h3>
           </div>
           <ul className="space-y-3.5">
-            {(analysis.weakAreas as string[]).map((weakness, idx) => (
+            {analysis.weakAreas.map((weakness, idx) => (
               <li key={idx} className="flex gap-3 items-start text-[13px] text-muted-foreground leading-relaxed">
                 <span className="text-chart-3">!</span>
                 <span>{weakness}</span>
@@ -159,7 +168,7 @@ export function CareerAdvisor({ userId: _userId, initialAnalysis }: CareerAdviso
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          {(analysis.careerRecommendations as string[]).map((rec, idx) => (
+          {analysis.careerRecommendations.map((rec, idx) => (
             <div key={idx} className="p-5 rounded-[10px] bg-surface-2 border border-border space-y-2 flex flex-col justify-between h-full">
               <div>
                 <span className="w-6 h-6 rounded-[8px] bg-muted flex items-center justify-center text-[10px] font-medium text-brand mb-3">

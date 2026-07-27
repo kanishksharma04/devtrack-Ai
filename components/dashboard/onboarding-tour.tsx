@@ -91,6 +91,8 @@ export function OnboardingTour() {
   const resizeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    // Client-only mount flag (avoids SSR/hydration mismatch) — cannot be derived at render time.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const completed = localStorage.getItem(STORAGE_KEY);
     if (!completed) {
@@ -109,6 +111,8 @@ export function OnboardingTour() {
 
   useEffect(() => {
     if (!active) return;
+    // Measures a live DOM element's position — inherently imperative, not derivable at render time.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     measure(step);
 
     const onResize = () => {

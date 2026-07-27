@@ -1,7 +1,20 @@
 import { AuthOptions } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
+
+const isProduction = process.env.NODE_ENV === "production";
+
+// Fail fast on missing secrets in production rather than silently falling
+// back to a value that's checked into git history and known to anyone who
+// can read the source — that fallback would make sessions forgeable.
+if (isProduction && !process.env.NEXTAUTH_SECRET) {
+  throw new Error("NEXTAUTH_SECRET must be set in production.");
+}
+if (isProduction && (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET)) {
+  throw new Error("GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set in production.");
+}
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -132,8 +145,8 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.userId;
-        (session as any).accessToken = token.accessToken;
+        session.user.id = token.userId;
+        session.accessToken = token.accessToken;
       }
       return session;
     },
@@ -144,3 +157,20 @@ export const authOptions: AuthOptions = {
     error: "/",
   },
 };
+
+/**
+ * Returns the signed-in user's database ID, or null when unauthenticated.
+ * Centralizes the session/user/id null-checks that every page and API
+ * route otherwise had to repeat.
+ */
+export async function getSessionUserId(): Promise<string | null> {
+  const session = await getServerSession(authOptions);
+  return session?.user?.id ?? null;
+}
+
+/** Same as {@link getSessionUserId}, but also requires a GitHub access token. */
+export async function getSessionWithAccessToken(): Promise<{ userId: string; accessToken: string } | null> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id || !session.accessToken) return null;
+  return { userId: session.user.id, accessToken: session.accessToken };
+}

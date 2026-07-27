@@ -1,5 +1,6 @@
 import { prisma } from "../prisma";
 import { z } from "zod";
+import type { Repository, User, CodingAnalytics } from "../generated/prisma";
 
 // Zod schemas to validate Gemini's JSON responses
 const RepositoryInsightSchema = z.object({
@@ -23,7 +24,7 @@ const PortfolioAnalysisSchema = z.object({
 });
 
 // Prompt templates isolated from components
-const REPO_PROMPT_TEMPLATE = (repo: any) => `
+const REPO_PROMPT_TEMPLATE = (repo: Repository) => `
 You are an expert Code Reviewer and Software Architect. Analyze the following repository metadata and generate a comprehensive review.
 
 Repository Name: ${repo.name}
@@ -51,7 +52,11 @@ Schema structure:
 }
 `;
 
-const PORTFOLIO_PROMPT_TEMPLATE = (user: any, repos: any[], analytics: any) => `
+const PORTFOLIO_PROMPT_TEMPLATE = (
+  user: Pick<User, "name">,
+  repos: Repository[],
+  analytics: CodingAnalytics | null
+) => `
 You are an elite Software Career Coach and Engineering Recruiter. Analyze the following developer's entire profile, connected repositories, language usage, and activity statistics, and provide a career roadmap.
 
 Developer Name: ${user.name || "Anonymous Developer"}
@@ -123,8 +128,8 @@ async function callGemini(prompt: string): Promise<string> {
     }
 
     return rawText.trim();
-  } catch (err: any) {
-    if (err.name === "AbortError") {
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
       throw new Error(`Gemini request timed out after ${GEMINI_TIMEOUT_MS / 1000}s.`);
     }
     throw err;
@@ -134,7 +139,7 @@ async function callGemini(prompt: string): Promise<string> {
 }
 
 // Generate premium mock fallback data for repository insights when API keys are missing or calls fail
-function getMockRepoInsight(repo: any) {
+function getMockRepoInsight(repo: Repository) {
   const scoreBase = repo.stars > 10 ? 80 : 65;
   const docsScore = repo.description ? 75 : 40;
   return {
@@ -158,9 +163,14 @@ function getMockRepoInsight(repo: any) {
 }
 
 // Generate premium mock fallback data for career analysis
-function getMockPortfolioAnalysis(user: any, repos: any[], analytics: any) {
+function getMockPortfolioAnalysis(
+  user: Pick<User, "name">,
+  repos: Repository[],
+  analytics: CodingAnalytics | null
+) {
   const totalStars = analytics?.totalStars || 0;
-  const primaryLang = analytics?.topLanguages?.[0]?.name || "TypeScript";
+  const topLanguages = analytics?.topLanguages as { name: string }[] | null | undefined;
+  const primaryLang = topLanguages?.[0]?.name || "TypeScript";
   
   let role = "Fullstack Developer";
   if (primaryLang === "Python" || primaryLang === "R") role = "AI/ML Engineer";

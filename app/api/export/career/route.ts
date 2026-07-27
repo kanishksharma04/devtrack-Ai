@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { pdf } from "@react-pdf/renderer";
 import type { DocumentProps } from "@react-pdf/renderer";
 import { CareerPDF } from "@/lib/pdf/career-pdf";
+import { getErrorMessage } from "@/lib/utils";
 import React from "react";
 
 export const dynamic = "force-dynamic";
@@ -19,11 +19,10 @@ async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = (session.user as any).id;
 
     const [user, analysis] = await Promise.all([
       prisma.user.findUnique({ where: { id: userId }, select: { name: true, githubUsername: true } }),
@@ -61,8 +60,8 @@ export async function GET() {
         "Cache-Control": "no-store",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[export/career]", error);
-    return NextResponse.json({ error: error.message || "Failed to generate PDF." }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error, "Failed to generate PDF.") }, { status: 500 });
   }
 }

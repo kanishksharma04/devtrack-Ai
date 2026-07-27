@@ -1,23 +1,35 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Cpu, RefreshCw, CheckCircle2, ChevronRight, Clock, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useAnalysisJob } from "@/lib/hooks/use-analysis-job";
 
+interface RepositoryInsightData {
+  updatedAt?: string | Date;
+  codeQualityScore: number;
+  documentationScore: number;
+  performanceScore: number;
+  securityScore: number;
+  readabilityScore: number;
+  summary: string;
+  highlights: string[];
+  recommendations: string[];
+}
+
 interface RepoDetailAuditProps {
   repoId: string;
-  initialInsights: any;
+  initialInsights: RepositoryInsightData | null;
 }
 
 export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProps) {
-  const [insights, setInsights] = useState(initialInsights);
   const job = useAnalysisJob();
   const toastRef = useRef<string | number | null>(null);
+  const insights: RepositoryInsightData | null =
+    job.status === "completed" && job.data ? job.data : initialInsights;
 
   useEffect(() => {
     if (job.status === "completed" && job.data) {
-      setInsights(job.data);
       if (toastRef.current !== null) toast.success("Audit complete!", { id: toastRef.current });
     } else if (job.status === "failed") {
       if (toastRef.current !== null) toast.error(job.error || "Audit failed.", { id: toastRef.current });
@@ -149,7 +161,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
           <div className="p-4 md:p-6 border border-border bg-card rounded-[14px] space-y-4">
             <h4 className="text-[12px] font-medium text-text-muted-custom uppercase tracking-wide">Project Highlights</h4>
             <ul className="space-y-3">
-              {(insights.highlights as string[]).map((highlight, idx) => (
+              {insights.highlights.map((highlight, idx) => (
                 <li key={idx} className="flex gap-2.5 items-start text-[13px] text-muted-foreground">
                   <CheckCircle2 className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                   <span>{highlight}</span>
@@ -161,7 +173,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
           <div className="p-4 md:p-6 border border-border bg-card rounded-[14px] space-y-4">
             <h4 className="text-[12px] font-medium text-text-muted-custom uppercase tracking-wide">AI Recommendations</h4>
             <ul className="space-y-3">
-              {(insights.recommendations as string[]).map((rec, idx) => (
+              {insights.recommendations.map((rec, idx) => (
                 <li key={idx} className="flex gap-2.5 items-start text-[13px] text-muted-foreground">
                   <ChevronRight className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                   <span>{rec}</span>

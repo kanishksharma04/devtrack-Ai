@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -8,11 +7,10 @@ export async function GET(
   { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user || !(session.user as any).id) {
+    const userId = await getSessionUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
-    const userId = (session.user as any).id as string;
     const { jobId } = await params;
 
     const job = await prisma.analysisJob.findFirst({
@@ -29,7 +27,7 @@ export async function GET(
       data: job.result ?? null,
       error: job.error ?? null,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[api/analyze/[jobId]] error:", error);
     return NextResponse.json({ error: "Failed to fetch job status." }, { status: 500 });
   }

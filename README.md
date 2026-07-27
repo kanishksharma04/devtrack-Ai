@@ -46,7 +46,7 @@ A production-grade developer portfolio intelligence platform. Connect your GitHu
 ### Framework & Language
 | Technology | Version | Purpose |
 |---|---|---|
-| [Next.js](https://nextjs.org) | 16.2.9 | Full-stack React framework (App Router) |
+| [Next.js](https://nextjs.org) | 16.2.12 | Full-stack React framework (App Router) |
 | [TypeScript](https://typescriptlang.org) | 5 | Type safety across the entire codebase |
 | [React](https://react.dev) | 19 | UI library |
 
@@ -86,17 +86,15 @@ A production-grade developer portfolio intelligence platform. Connect your GitHu
 | [Sonner](https://sonner.emilkowal.ski) | 2.0 | Toast notifications |
 | [next-themes](https://github.com/pacocoursey/next-themes) | 0.4 | Dark / light theme management |
 
-### Forms & Validation
+### Validation
 | Technology | Version | Purpose |
 |---|---|---|
-| [React Hook Form](https://react-hook-form.com) | 7.80 | Form state management |
-| [Zod](https://zod.dev) | 4.4 | Schema validation |
+| [Zod](https://zod.dev) | 4.4 | Runtime validation of Gemini's JSON responses |
 
 ### Export & Utilities
 | Technology | Version | Purpose |
 |---|---|---|
 | [@react-pdf/renderer](https://react-pdf.org) | 4.5 | PDF export for audit reports |
-| [date-fns](https://date-fns.org) | 4.4 | Date formatting and manipulation |
 
 ### Deployment & Infrastructure
 | Technology | Purpose |
@@ -259,11 +257,13 @@ After deploying, sync your app with Inngest: go to the [Inngest dashboard](https
 
 | Model | Purpose |
 |---|---|
-| `User` | GitHub OAuth profile, sync metadata, public portfolio toggle |
-| `Repository` | GitHub repo metadata, language stats, pinned order |
-| `Commit` | Individual commits for the activity heatmap |
-| `CareerAnalysis` | Persisted Gemini portfolio analysis |
-| `RepositoryAnalysis` | Persisted Gemini per-repo code audit |
+| `User` | GitHub OAuth profile, public portfolio toggle |
+| `Account` / `Session` / `VerificationToken` | NextAuth's standard adapter models |
+| `Repository` | Synced GitHub repo metadata and language breakdown |
+| `PinnedRepository` | User-ordered pins shown on the public portfolio |
+| `RepositoryInsight` | Persisted Gemini per-repo code audit (1:1 with `Repository`) |
+| `CodingAnalytics` | Aggregated commit/star/language stats from the last sync |
+| `PortfolioAnalysis` | Persisted Gemini career/portfolio analysis (1:1 with `User`) |
 | `AnalysisJob` | Background job status tracker (queued → running → completed / failed) |
 
 ---
