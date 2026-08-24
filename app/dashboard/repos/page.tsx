@@ -11,7 +11,7 @@ export default async function ReposPage() {
 
   const repositories = await prisma.repository.findMany({
     where: { userId },
-    orderBy: { pushedAt: "desc" },
+    orderBy: { pushedAt: { sort: "desc", nulls: "last" } },
     include: { insights: true },
   });
 

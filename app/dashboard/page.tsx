@@ -26,7 +26,7 @@ export default async function DashboardPage() {
       include: {
         repositories: {
           take: 3,
-          orderBy: { pushedAt: "desc" },
+          orderBy: { pushedAt: { sort: "desc", nulls: "last" } },
           include: { insights: true },
         },
         codingAnalytics: true,
