@@ -29,14 +29,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
     }
 
-    const rl = await checkAnalyzeLimit(userId);
-    if (!rl.success) {
-      return NextResponse.json(
-        { error: `Rate limit exceeded. Please wait ${rl.retryAfter}s before retrying.` },
-        { status: 429, headers: rateLimitHeaders(rl) }
-      );
-    }
-
     const body = await req.json().catch(() => ({}));
     const { type, repositoryId } = body as { type?: string; repositoryId?: string };
 
@@ -50,6 +42,18 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "repositoryId is required for repo analysis." },
         { status: 400 }
+      );
+    }
+
+    // Structural validation above is cheap and doesn't touch the DB or the
+    // limiter, so a stream of malformed requests can't burn through the
+    // hourly quota before ever reaching a request that would actually queue
+    // Gemini work.
+    const rl = await checkAnalyzeLimit(userId);
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: `Rate limit exceeded. Please wait ${rl.retryAfter}s before retrying.` },
+        { status: 429, headers: rateLimitHeaders(rl) }
       );
     }
 
