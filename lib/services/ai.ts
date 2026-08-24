@@ -198,9 +198,9 @@ function getMockPortfolioAnalysis(
   };
 }
 
-export async function analyzeRepository(repositoryId: string) {
-  const repo = await prisma.repository.findUnique({
-    where: { id: repositoryId },
+export async function analyzeRepository(repositoryId: string, userId: string) {
+  const repo = await prisma.repository.findFirst({
+    where: { id: repositoryId, userId },
   });
 
   if (!repo) {

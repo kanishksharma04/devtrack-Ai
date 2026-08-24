@@ -40,7 +40,7 @@ export const analyzeFunction = inngest.createFunction(
     const result = await step.run("run-gemini-analysis", async () => {
       if (type === "repo") {
         if (!repositoryId) throw new Error("repositoryId required for repo analysis");
-        return analyzeRepository(repositoryId);
+        return analyzeRepository(repositoryId, userId);
       }
       return analyzePortfolio(userId);
     });

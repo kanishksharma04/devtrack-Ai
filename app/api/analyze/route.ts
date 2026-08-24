@@ -53,6 +53,16 @@ export async function POST(req: Request) {
       );
     }
 
+    if (type === "repo" && repositoryId) {
+      const repo = await prisma.repository.findFirst({
+        where: { id: repositoryId, userId },
+        select: { id: true },
+      });
+      if (!repo) {
+        return NextResponse.json({ error: "Repository not found." }, { status: 404 });
+      }
+    }
+
     // Return a cached result if one completed within the last 24 h — no Gemini call, no rate limit consumed.
     const cached = await prisma.analysisJob.findFirst({
       where: {
