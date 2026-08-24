@@ -3,9 +3,36 @@ import type { Prisma } from "../generated/prisma";
 import { getCachedLanguages, setCachedLanguages } from "../cache/github-cache";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const GITHUB_TIMEOUT_MS = process.env.GITHUB_TIMEOUT_MS ? Number(process.env.GITHUB_TIMEOUT_MS) : 15_000;
 
 function formatMonthKey(date: Date): string {
   return date.toLocaleString("default", { month: "short", year: "2-digit" });
+}
+
+// Every GitHub call in this file used a bare `fetch` with no timeout, so a
+// single stalled request could hang until the platform kills the function —
+// burning the whole cron run's 300s budget and leaving every account after
+// it in the loop unsynced. Centralize the timeout (and shared headers) here.
+async function githubFetch(url: string, accessToken: string): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), GITHUB_TIMEOUT_MS);
+  try {
+    return await fetch(url, {
+      headers: {
+        Authorization: `token ${accessToken}`,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "DevTrack-AI",
+      },
+      signal: controller.signal,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error(`GitHub API request timed out after ${GITHUB_TIMEOUT_MS / 1000}s: ${url}`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 interface GitHubRepoResponse {
@@ -33,13 +60,7 @@ interface GitHubCommitResponse {
 }
 
 export async function fetchGitHubUser(accessToken: string) {
-  const res = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `token ${accessToken}`,
-      Accept: "application/vnd.github.v3+json",
-      "User-Agent": "DevTrack-AI",
-    },
-  });
+  const res = await githubFetch("https://api.github.com/user", accessToken);
 
   if (!res.ok) {
     throw new Error(`GitHub User API returned status ${res.status}: ${res.statusText}`);
@@ -255,15 +276,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     data: { githubUsername: username },
   });
 
-  const reposRes = await fetch(
+  const reposRes = await githubFetch(
     "https://api.github.com/user/repos?type=owner&sort=pushed&per_page=50",
-    {
-      headers: {
-        Authorization: `token ${accessToken}`,
-        Accept: "application/vnd.github.v3+json",
-        "User-Agent": "DevTrack-AI",
-      },
-    }
+    accessToken
   );
 
   if (!reposRes.ok) {
@@ -300,15 +315,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       if (cached) {
         languages = cached;
       } else {
-        const langRes = await fetch(
+        const langRes = await githubFetch(
           `https://api.github.com/repos/${username}/${repo.name}/languages`,
-          {
-            headers: {
-              Authorization: `token ${accessToken}`,
-              Accept: "application/vnd.github.v3+json",
-              "User-Agent": "DevTrack-AI",
-            },
-          }
+          accessToken
         );
 
         if (langRes.ok) {
@@ -377,15 +386,9 @@ export async function syncGitHubData(userId: string, accessToken: string) {
 
   for (const repo of reposToProcess) {
     try {
-      const commitsRes = await fetch(
+      const commitsRes = await githubFetch(
         `https://api.github.com/repos/${username}/${repo.name}/commits?author=${username}&since=${sinceIso}&per_page=100`,
-        {
-          headers: {
-            Authorization: `token ${accessToken}`,
-            Accept: "application/vnd.github.v3+json",
-            "User-Agent": "DevTrack-AI",
-          },
-        }
+        accessToken
       );
 
       if (commitsRes.ok) {
