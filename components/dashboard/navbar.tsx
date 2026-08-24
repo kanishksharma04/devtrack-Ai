@@ -9,7 +9,12 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
+interface NavbarProps {
+  onMenuClick?: () => void;
+  menuButtonRef?: React.RefObject<HTMLButtonElement | null>;
+}
+
+export function Navbar({ onMenuClick, menuButtonRef }: NavbarProps) {
   const { data: session } = useSession();
   const [syncing, setSyncing] = useState(false);
   const [lastSynced, setLastSynced] = useState<string | null>(null);
@@ -55,6 +60,7 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
     <header className="flex items-center justify-between px-4 md:px-8 min-h-16 border-b border-border bg-sidebar sticky top-0 z-50 shrink-0 pt-safe">
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <button
+          ref={menuButtonRef}
           onClick={onMenuClick}
           className="md:hidden flex items-center justify-center w-10 h-10 shrink-0 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label="Open menu"
