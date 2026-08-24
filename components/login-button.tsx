@@ -53,18 +53,18 @@ export function LoginButton({ hasGithubConfigured = true, isDev = false, authErr
 
   if (!hasGithubConfigured) {
     return (
-      <div className="flex flex-col items-center gap-6 max-w-xl mx-auto p-6 rounded-[14px] border border-[rgba(255,255,255,0.06)] bg-[#151515]">
+      <div className="flex flex-col items-center gap-6 max-w-xl mx-auto p-6 rounded-[14px] border border-border bg-card">
         <div className="flex items-start gap-3 text-left">
-          <Info className="w-5 h-5 text-[#10B981] mt-0.5 shrink-0" />
+          <Info className="w-5 h-5 text-brand mt-0.5 shrink-0" />
           <div className="space-y-1">
-            <h4 className="font-semibold text-white text-[14px]">GitHub Credentials Offline</h4>
-            <p className="text-[13px] text-[#a3a3a3] leading-relaxed font-medium">
+            <h4 className="font-semibold text-foreground text-[14px]">GitHub Credentials Offline</h4>
+            <p className="text-[13px] text-muted-foreground leading-relaxed font-medium">
               To connect your real GitHub account, define{" "}
-              <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_ID</code>{" "}
+              <code className="text-foreground bg-muted px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_ID</code>{" "}
               and{" "}
-              <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_SECRET</code>{" "}
+              <code className="text-foreground bg-muted px-1.5 py-0.5 rounded font-mono">GITHUB_CLIENT_SECRET</code>{" "}
               inside{" "}
-              <code className="text-[#e5e5e5] bg-[#1a1a1a] px-1.5 py-0.5 rounded font-mono">.env.local</code>.
+              <code className="text-foreground bg-muted px-1.5 py-0.5 rounded font-mono">.env.local</code>.
             </p>
           </div>
         </div>
@@ -74,7 +74,7 @@ export function LoginButton({ hasGithubConfigured = true, isDev = false, authErr
             <button
               onClick={handleMockLogin}
               disabled={loading !== null}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 h-auto rounded-[10px] bg-[#10B981] hover:bg-[#059669] text-white font-semibold text-[13px] transition-colors duration-150 cursor-pointer disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 h-auto rounded-[10px] bg-brand hover:bg-brand-hover text-white font-semibold text-[13px] transition-colors duration-150 cursor-pointer disabled:opacity-50"
             >
               {loading === "mock" ? "Entering Demo Mode..." : "Sign in with Demo Account"}
             </button>
@@ -83,7 +83,7 @@ export function LoginButton({ hasGithubConfigured = true, isDev = false, authErr
           <button
             onClick={handleGitHubLogin}
             disabled={loading !== null}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 h-auto rounded-[10px] border border-[rgba(255,255,255,0.06)] bg-[#1a1a1a] hover:bg-[#252525] text-[#a3a3a3] hover:text-white font-medium text-[13px] transition-colors duration-150 cursor-pointer disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 h-auto rounded-[10px] border border-border bg-muted hover:bg-surface-5 text-muted-foreground hover:text-foreground font-medium text-[13px] transition-colors duration-150 cursor-pointer disabled:opacity-50"
           >
             <FaGithub className="w-4 h-4" />
             {loading === "github" ? "Connecting..." : "Connect GitHub"}
