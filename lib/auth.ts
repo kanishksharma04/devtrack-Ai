@@ -153,6 +153,22 @@ export const authOptions: AuthOptions = {
           token.userId = dbAccount.userId;
           token.accessToken = dbAccount.access_token || account.access_token;
         }
+        return token;
+      }
+
+      // On every other request, confirm the user this token points at still
+      // exists. Without this, DELETE /api/account removes the User row but
+      // the JWT itself is still validly signed — the session would keep
+      // working (and creating orphaned rows) until it naturally expires.
+      if (token.userId) {
+        const stillExists = await prisma.user.findUnique({
+          where: { id: token.userId },
+          select: { id: true },
+        });
+        if (!stillExists) {
+          token.userId = undefined;
+          token.accessToken = undefined;
+        }
       }
       return token;
     },
