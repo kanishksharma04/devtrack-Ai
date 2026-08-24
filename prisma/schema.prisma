@@ -62,7 +62,7 @@ model VerificationToken {
 model Repository {
   id              String             @id @default(uuid())
   userId          String
-  githubId        BigInt             @unique
+  githubId        BigInt
   name            String
   fullName        String
   description     String?
@@ -82,7 +82,12 @@ model Repository {
   insights        RepositoryInsight?
   pins            PinnedRepository[]
 
-  @@index([userId])
+  // Scoped per user rather than a bare global unique: a bare @unique on
+  // githubId meant two different users syncing a repo with the same
+  // GitHub id (e.g. both landing on the mock/demo data fallback) would
+  // silently reassign that Repository row — and its cascaded insights and
+  // pins — from one user to the other on the next sync.
+  @@unique([userId, githubId])
 }
 
 model PinnedRepository {

@@ -129,7 +129,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
 
       const dbRepo = await prisma.repository.upsert({
         where: {
-          githubId: BigInt(repo.id),
+          userId_githubId: { userId, githubId: BigInt(repo.id) },
         },
         update: {
           userId,
@@ -341,7 +341,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
 
     const dbRepo = await prisma.repository.upsert({
       where: {
-        githubId: BigInt(repo.id),
+        userId_githubId: { userId, githubId: BigInt(repo.id) },
       },
       update: {
         userId,
