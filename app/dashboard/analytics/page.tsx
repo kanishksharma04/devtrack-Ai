@@ -10,7 +10,11 @@ export default async function AnalyticsPage() {
 
   const [analytics, repositories] = await Promise.all([
     prisma.codingAnalytics.findUnique({ where: { userId } }),
-    prisma.repository.findMany({ where: { userId }, orderBy: { stars: "desc" } }),
+    prisma.repository.findMany({
+      where: { userId },
+      orderBy: { stars: "desc" },
+      select: { name: true, stars: true },
+    }),
   ]);
 
   return (
