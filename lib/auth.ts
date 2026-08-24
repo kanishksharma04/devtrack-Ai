@@ -54,6 +54,16 @@ export const authOptions: AuthOptions = {
     async signIn({ user, account }) {
       if (!account) return false;
 
+      // A real GitHub sign-in must always return an access token. If it
+      // doesn't, this is a failed/partial OAuth exchange — fail closed
+      // rather than falling back to a placeholder value, which
+      // syncGitHubData would otherwise treat as a request to seed fake
+      // demo data under this real user's account.
+      if (account.provider === "github" && !account.access_token) {
+        console.error("GitHub OAuth sign-in returned no access_token; rejecting sign-in.");
+        return false;
+      }
+
       try {
         const existingAccount = await prisma.account.findUnique({
           where: {
@@ -94,6 +104,9 @@ export const authOptions: AuthOptions = {
           });
         }
 
+        // The "mock_token" fallback below is now only reachable for the
+        // dev-only Credentials (demo) provider — GitHub sign-ins without an
+        // access_token were already rejected above.
         await prisma.account.upsert({
           where: {
             provider_providerAccountId: {
