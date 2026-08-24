@@ -22,18 +22,28 @@ interface CareerAdvisorProps {
 export function CareerAdvisor({ initialAnalysis }: CareerAdvisorProps) {
   const job = useAnalysisJob();
   const toastRef = useRef<string | number | null>(null);
+  // Guards against a fast double-click firing this handler twice before
+  // `loading` (derived from job state) re-renders the disabled button —
+  // without it, the second click's own toast overwrites toastRef and the
+  // first toast is never resolved to success/error.
+  const inFlightRef = useRef(false);
   const analysis: PortfolioAnalysisData | null =
     job.status === "completed" && job.data ? job.data : initialAnalysis;
 
   useEffect(() => {
     if (job.status === "completed" && job.data) {
       if (toastRef.current !== null) toast.success("Career roadmap generated!", { id: toastRef.current });
+      inFlightRef.current = false;
     } else if (job.status === "failed") {
       if (toastRef.current !== null) toast.error(job.error || "Analysis failed.", { id: toastRef.current });
+      inFlightRef.current = false;
     }
   }, [job.status, job.data, job.error]);
 
   const handleAnalyze = async () => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
+
     const id = toast.loading("Evaluating your developer profile...");
     toastRef.current = id;
 
@@ -41,6 +51,7 @@ export function CareerAdvisor({ initialAnalysis }: CareerAdvisorProps) {
     if (!result.ok) {
       toast.dismiss(id);
       toastRef.current = null;
+      inFlightRef.current = false;
       if (result.httpStatus === 429) {
         toast.error(result.error || "Rate limit reached. Please wait before retrying.");
       } else {

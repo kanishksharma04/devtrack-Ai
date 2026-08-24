@@ -27,6 +27,11 @@ export function useAnalysisJob() {
     httpStatus: null,
   });
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Tracks whether a job is in flight synchronously, unlike `state.loading`
+  // which only updates on the next render. Without this, a second startJob
+  // call landing before that render commits (e.g. a fast double-click) would
+  // tear down the first job's poll via stopPolling() below and orphan it.
+  const inFlightRef = useRef(false);
 
   const stopPolling = useCallback(() => {
     if (pollRef.current !== null) {
@@ -43,6 +48,11 @@ export function useAnalysisJob() {
    */
   const startJob = useCallback(
     async (type: "repo" | "portfolio", repositoryId?: string) => {
+      if (inFlightRef.current) {
+        return { ok: false, httpStatus: 0, error: "An analysis is already in progress." };
+      }
+      inFlightRef.current = true;
+
       stopPolling();
       setState({ loading: true, jobId: null, status: null, data: null, error: null, httpStatus: null });
 
@@ -57,6 +67,7 @@ export function useAnalysisJob() {
         const json = await res.json().catch(() => ({})) as any;
 
         if (!res.ok) {
+          inFlightRef.current = false;
           setState({
             loading: false,
             jobId: null,
@@ -79,6 +90,7 @@ export function useAnalysisJob() {
 
             if (pollJson.status === "completed") {
               stopPolling();
+              inFlightRef.current = false;
               setState({
                 loading: false,
                 jobId,
@@ -89,6 +101,7 @@ export function useAnalysisJob() {
               });
             } else if (pollJson.status === "failed") {
               stopPolling();
+              inFlightRef.current = false;
               setState({
                 loading: false,
                 jobId,
@@ -107,6 +120,7 @@ export function useAnalysisJob() {
 
         return { ok: true, httpStatus: res.status, jobId };
       } catch {
+        inFlightRef.current = false;
         setState({
           loading: false,
           jobId: null,

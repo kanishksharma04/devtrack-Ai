@@ -25,18 +25,28 @@ interface RepoDetailAuditProps {
 export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProps) {
   const job = useAnalysisJob();
   const toastRef = useRef<string | number | null>(null);
+  // Guards against a fast double-click firing this handler twice before
+  // `loading` (derived from job state) re-renders the disabled button —
+  // without it, the second click's own toast overwrites toastRef and the
+  // first toast is never resolved to success/error.
+  const inFlightRef = useRef(false);
   const insights: RepositoryInsightData | null =
     job.status === "completed" && job.data ? job.data : initialInsights;
 
   useEffect(() => {
     if (job.status === "completed" && job.data) {
       if (toastRef.current !== null) toast.success("Audit complete!", { id: toastRef.current });
+      inFlightRef.current = false;
     } else if (job.status === "failed") {
       if (toastRef.current !== null) toast.error(job.error || "Audit failed.", { id: toastRef.current });
+      inFlightRef.current = false;
     }
   }, [job.status, job.data, job.error]);
 
   const handleAudit = async () => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
+
     const id = toast.loading("Running AI code audit...");
     toastRef.current = id;
 
@@ -44,6 +54,7 @@ export function RepoDetailAudit({ repoId, initialInsights }: RepoDetailAuditProp
     if (!result.ok) {
       toast.dismiss(id);
       toastRef.current = null;
+      inFlightRef.current = false;
       if (result.httpStatus === 429) {
         toast.error(result.error || "Rate limit reached. Please wait before retrying.");
       } else {
