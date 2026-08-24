@@ -1,12 +1,6 @@
 import { prisma } from "../prisma";
 import type { Prisma } from "../generated/prisma";
-import {
-  getCachedRepos,
-  setCachedRepos,
-  getCachedLanguages,
-  setCachedLanguages,
-  invalidateUserReposCache,
-} from "../cache/github-cache";
+import { getCachedLanguages, setCachedLanguages } from "../cache/github-cache";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -252,9 +246,6 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     };
   }
 
-  // Invalidate the repos-list cache so this sync always gets fresh data from GitHub.
-  await invalidateUserReposCache(userId);
-
   const ghUser = await fetchGitHubUser(accessToken);
   const username = ghUser.login;
 
@@ -264,29 +255,22 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     data: { githubUsername: username },
   });
 
-  // Try repos-list from cache first (won't hit after invalidation above, but
-  // retained so warm reads between syncs still benefit if called externally).
-  let reposData = await getCachedRepos(userId);
-  if (!reposData) {
-    const reposRes = await fetch(
-      "https://api.github.com/user/repos?type=owner&sort=pushed&per_page=50",
-      {
-        headers: {
-          Authorization: `token ${accessToken}`,
-          Accept: "application/vnd.github.v3+json",
-          "User-Agent": "DevTrack-AI",
-        },
-      }
-    );
-
-    if (!reposRes.ok) {
-      throw new Error(`GitHub Repos API returned status ${reposRes.status}: ${reposRes.statusText}`);
+  const reposRes = await fetch(
+    "https://api.github.com/user/repos?type=owner&sort=pushed&per_page=50",
+    {
+      headers: {
+        Authorization: `token ${accessToken}`,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "DevTrack-AI",
+      },
     }
+  );
 
-    reposData = (await reposRes.json()) as GitHubRepoResponse[];
-    // Cache for short window — subsequent reads within the sync are warm.
-    await setCachedRepos(userId, reposData);
+  if (!reposRes.ok) {
+    throw new Error(`GitHub Repos API returned status ${reposRes.status}: ${reposRes.statusText}`);
   }
+
+  const reposData = (await reposRes.json()) as GitHubRepoResponse[];
 
   const syncedRepos = [];
   let totalStars = 0;
