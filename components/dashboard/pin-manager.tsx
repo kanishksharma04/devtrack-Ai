@@ -34,6 +34,8 @@ export function PinManager({ allRepos }: PinManagerProps) {
   const [showAdd, setShowAdd] = useState(false);
   const dragId = useRef<string | null>(null);
   const dragOverId = useRef<string | null>(null);
+  const addContainerRef = useRef<HTMLDivElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     fetch("/api/pins")
@@ -42,6 +44,32 @@ export function PinManager({ allRepos }: PinManagerProps) {
       .catch(() => toast.error("Failed to load pinned repos."))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!showAdd) return;
+
+    // The dropdown was only ever closed by re-clicking the toggle button or
+    // picking a repo — clicking anywhere else on the page left it floating
+    // open over subsequent content, with no way to dismiss it via keyboard.
+    const onPointerDown = (e: MouseEvent) => {
+      if (addContainerRef.current && !addContainerRef.current.contains(e.target as Node)) {
+        setShowAdd(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowAdd(false);
+        addButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [showAdd]);
 
   const pinnedIds = new Set(pins.map((p) => p.repositoryId));
   const unpinnedRepos = allRepos.filter((r) => !pinnedIds.has(r.id));
@@ -178,8 +206,9 @@ export function PinManager({ allRepos }: PinManagerProps) {
       )}
 
       {pins.length < MAX_PINS && (
-        <div className="relative">
+        <div className="relative" ref={addContainerRef}>
           <button
+            ref={addButtonRef}
             onClick={() => setShowAdd((s) => !s)}
             className="flex items-center gap-2 text-[12px] font-medium text-muted-foreground hover:text-foreground border border-dashed border-border hover:border-border-medium px-3 py-2 rounded-[10px] transition-colors w-full justify-center"
           >
