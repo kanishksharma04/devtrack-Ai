@@ -60,6 +60,7 @@ export default async function DashboardPage() {
   const totalCommits = dbUser.codingAnalytics?.totalCommits || 0;
   const totalStars = dbUser.codingAnalytics?.totalStars || 0;
   const totalForks = dbUser.codingAnalytics?.totalForks || 0;
+  const topLanguages = (dbUser.codingAnalytics?.topLanguages as { name: string; percentage: number }[] | null) || [];
 
   const serializedRepos = dbUser.repositories.map((repo) => ({
     id: repo.id,
@@ -188,9 +189,9 @@ export default async function DashboardPage() {
         <div className="space-y-8">
           <div className="p-4 md:p-8 border border-border bg-card rounded-[14px]">
             <h3 className="text-[14px] font-semibold mb-6">Language breakdown</h3>
-            {dbUser.codingAnalytics?.topLanguages ? (
+            {topLanguages.length > 0 ? (
               <div className="space-y-4">
-                {(dbUser.codingAnalytics.topLanguages as { name: string; percentage: number }[]).slice(0, 5).map((lang, idx) => (
+                {topLanguages.slice(0, 5).map((lang, idx) => (
                   <div key={idx} className="space-y-1.5">
                     <div className="flex items-center justify-between text-[12px]">
                       <span className="font-medium">{lang.name}</span>
