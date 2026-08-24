@@ -5,9 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/** Extracts a human-readable message from a caught value of unknown type. */
+/**
+ * Builds a safe, client-facing error message for a caught value of unknown
+ * type. Every call site in this codebase feeds the result straight into an
+ * API error response, and the real message can carry internal details
+ * (Prisma query text, stack traces, upstream API bodies) that shouldn't
+ * reach the client — so only `fallback` is ever returned. The real error is
+ * logged server-side here so routes that don't do their own logging don't
+ * lose visibility entirely.
+ */
 export function getErrorMessage(error: unknown, fallback = "Something went wrong."): string {
-  if (error instanceof Error) return error.message || fallback;
+  console.error(error);
   return fallback;
 }
 
