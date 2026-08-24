@@ -66,7 +66,7 @@ export async function fetchGitHubUser(accessToken: string) {
     throw new Error(`GitHub User API returned status ${res.status}: ${res.statusText}`);
   }
 
-  return res.json() as Promise<{ login: string; email: string | null }>;
+  return res.json() as Promise<{ login: string; email: string | null; created_at: string }>;
 }
 
 export async function syncGitHubData(userId: string, accessToken: string) {
@@ -270,10 +270,12 @@ export async function syncGitHubData(userId: string, accessToken: string) {
   const ghUser = await fetchGitHubUser(accessToken);
   const username = ghUser.login;
 
-  // Store the GitHub username in the user record
+  // Store the GitHub username and account-creation date — the latter bounds
+  // how far back the analytics year picker offers years for, so it doesn't
+  // list years before the user could possibly have any GitHub activity.
   await prisma.user.update({
     where: { id: userId },
-    data: { githubUsername: username },
+    data: { githubUsername: username, githubJoinedAt: new Date(ghUser.created_at) },
   });
 
   const reposRes = await githubFetch(
@@ -427,13 +429,25 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     commits: count,
   }));
 
+  // Merge the freshly-fetched trailing-365-day window into whatever's
+  // already stored rather than overwriting it outright — the year picker
+  // (getOrFetchContributionYear below) backfills full past calendar years
+  // into this same field, and a plain overwrite here would silently wipe
+  // that history out on the next sync.
+  const existing = await prisma.codingAnalytics.findUnique({
+    where: { userId },
+    select: { dailyContributions: true },
+  });
+  const existingDaily = (existing?.dailyContributions as Record<string, number> | null) ?? {};
+  const mergedDaily = { ...existingDaily, ...commitsPerDay };
+
   // Upsert aggregated coding analytics
   const analytics = await prisma.codingAnalytics.upsert({
     where: { userId },
     update: {
       totalCommits,
       commitsPerMonth: commitsPerMonthChart as Prisma.InputJsonValue,
-      dailyContributions: commitsPerDay as Prisma.InputJsonValue,
+      dailyContributions: mergedDaily as Prisma.InputJsonValue,
       topLanguages: topLanguages as Prisma.InputJsonValue,
       totalStars,
       totalForks,
@@ -443,7 +457,7 @@ export async function syncGitHubData(userId: string, accessToken: string) {
       userId,
       totalCommits,
       commitsPerMonth: commitsPerMonthChart as Prisma.InputJsonValue,
-      dailyContributions: commitsPerDay as Prisma.InputJsonValue,
+      dailyContributions: mergedDaily as Prisma.InputJsonValue,
       topLanguages: topLanguages as Prisma.InputJsonValue,
       totalStars,
       totalForks,
@@ -459,4 +473,81 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     topLanguages,
     analytics,
   };
+}
+
+/**
+ * Backfills one full calendar year (Jan 1 - Dec 31) of commit activity into
+ * `dailyContributions`, for the analytics page's year picker. The regular
+ * sync above only ever covers a trailing 365-day window, so past years have
+ * to be fetched on demand the first time a user selects them; `fetchedYears`
+ * records which years have already been backfilled (including years with
+ * zero commits) so repeat views don't re-hit the GitHub API every time.
+ */
+export async function getOrFetchContributionYear(
+  userId: string,
+  accessToken: string,
+  year: number
+): Promise<{ dailyContributions: Record<string, number>; fetchedYears: number[] }> {
+  const existing = await prisma.codingAnalytics.findUnique({
+    where: { userId },
+    select: { dailyContributions: true, fetchedYears: true },
+  });
+  const dailyContributions = { ...((existing?.dailyContributions as Record<string, number> | null) ?? {}) };
+  const fetchedYears = existing?.fetchedYears ?? [];
+
+  if (fetchedYears.includes(year)) {
+    return { dailyContributions, fetchedYears };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { githubUsername: true },
+  });
+  if (!user?.githubUsername) {
+    throw new Error("Connect your GitHub account before viewing past years.");
+  }
+
+  const repos = await prisma.repository.findMany({
+    where: { userId },
+    select: { name: true },
+  });
+
+  const since = `${year}-01-01T00:00:00Z`;
+  const until = `${year}-12-31T23:59:59Z`;
+
+  for (const repo of repos) {
+    try {
+      const commitsRes = await githubFetch(
+        `https://api.github.com/repos/${user.githubUsername}/${repo.name}/commits?author=${user.githubUsername}&since=${since}&until=${until}&per_page=100`,
+        accessToken
+      );
+
+      if (commitsRes.ok) {
+        const commits = (await commitsRes.json()) as GitHubCommitResponse[];
+        for (const c of commits) {
+          const dateStr = c.commit.author.date.split("T")[0];
+          dailyContributions[dateStr] = (dailyContributions[dateStr] || 0) + 1;
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to fetch ${year} commits for repo ${repo.name}:`, err);
+    }
+  }
+
+  const updatedFetchedYears = [...new Set([...fetchedYears, year])].sort((a, b) => b - a);
+
+  await prisma.codingAnalytics.upsert({
+    where: { userId },
+    update: {
+      dailyContributions: dailyContributions as Prisma.InputJsonValue,
+      fetchedYears: updatedFetchedYears,
+    },
+    create: {
+      userId,
+      dailyContributions: dailyContributions as Prisma.InputJsonValue,
+      fetchedYears: updatedFetchedYears,
+    },
+  });
+
+  return { dailyContributions, fetchedYears: updatedFetchedYears };
 }

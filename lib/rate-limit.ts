@@ -35,6 +35,7 @@ function inMemoryCheck(
 // ---------------------------------------------------------------------------
 let _analyzeLimiter: Ratelimit | null = null;
 let _syncLimiter: Ratelimit | null = null;
+let _yearFetchLimiter: Ratelimit | null = null;
 
 function getAnalyzeLimiter(): Ratelimit | null {
   const redis = getRedis();
@@ -66,6 +67,21 @@ function getSyncLimiter(): Ratelimit | null {
   return _syncLimiter;
 }
 
+function getYearFetchLimiter(): Ratelimit | null {
+  const redis = getRedis();
+  if (!redis) return null;
+  if (!_yearFetchLimiter) {
+    const perWindow = parseInt(process.env.RATE_LIMIT_YEAR_FETCH_PER_10MIN || "20", 10);
+    _yearFetchLimiter = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(perWindow, "10 m"),
+      prefix: "rl:year-fetch",
+      analytics: false,
+    });
+  }
+  return _yearFetchLimiter;
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -89,6 +105,27 @@ export async function checkAnalyzeLimit(userId: string): Promise<RateLimitResult
     console.warn("[rate-limit] Redis unavailable — falling back to in-memory for analyze");
     const perHour = parseInt(process.env.RATE_LIMIT_ANALYZE_PER_HOUR || "5", 10);
     return inMemoryCheck(`analyze:${userId}`, perHour, 3_600_000);
+  }
+  const { success, limit, remaining, reset } = await limiter.limit(userId);
+  return {
+    success,
+    limit,
+    remaining,
+    reset,
+    retryAfter: success ? undefined : Math.ceil((reset - Date.now()) / 1000),
+  };
+}
+
+/**
+ * Check the per-user sliding-window limit for /api/analytics/year.
+ * Default: 20 requests per 10 minutes (configurable via RATE_LIMIT_YEAR_FETCH_PER_10MIN).
+ */
+export async function checkYearFetchLimit(userId: string): Promise<RateLimitResult> {
+  const limiter = getYearFetchLimiter();
+  if (!limiter) {
+    console.warn("[rate-limit] Redis unavailable — falling back to in-memory for year-fetch");
+    const perWindow = parseInt(process.env.RATE_LIMIT_YEAR_FETCH_PER_10MIN || "20", 10);
+    return inMemoryCheck(`year-fetch:${userId}`, perWindow, 10 * 60_000);
   }
   const { success, limit, remaining, reset } = await limiter.limit(userId);
   return {

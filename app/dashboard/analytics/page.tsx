@@ -8,13 +8,14 @@ export default async function AnalyticsPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/");
 
-  const [analytics, repositories] = await Promise.all([
+  const [analytics, repositories, user] = await Promise.all([
     prisma.codingAnalytics.findUnique({ where: { userId } }),
     prisma.repository.findMany({
       where: { userId },
       orderBy: { stars: "desc" },
       select: { name: true, stars: true },
     }),
+    prisma.user.findUnique({ where: { id: userId }, select: { githubJoinedAt: true } }),
   ]);
 
   return (
@@ -39,6 +40,8 @@ export default async function AnalyticsPage() {
             : null
         }
         repos={repositories}
+        fetchedYears={analytics?.fetchedYears ?? []}
+        githubJoinedYear={user?.githubJoinedAt ? user.githubJoinedAt.getFullYear() : null}
       />
     </div>
   );
