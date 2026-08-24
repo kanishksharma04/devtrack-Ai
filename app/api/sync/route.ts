@@ -4,6 +4,11 @@ import { syncGitHubData } from "@/lib/services/github";
 import { checkSyncLimit } from "@/lib/rate-limit";
 import { getErrorMessage } from "@/lib/utils";
 
+// syncGitHubData now fetches commit history across every synced repo
+// (not just the 6 most recently pushed), so this route needs more
+// headroom than the platform default for users with many repos.
+export const maxDuration = 300;
+
 function rateLimitHeaders(result: {
   limit?: number;
   remaining?: number;

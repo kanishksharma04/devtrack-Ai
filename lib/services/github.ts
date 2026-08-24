@@ -381,14 +381,17 @@ export async function syncGitHubData(userId: string, accessToken: string) {
     syncedRepos.push(dbRepo);
   }
 
-  // Fetch commits for top 6 active repos from the past year to compute contribution heatmap
+  // Fetch commits from the past year across all synced repos to compute the
+  // contribution heatmap. Previously this only looked at the 6 most-recently
+  // -pushed repos, which silently dropped commit history from any repo that
+  // wasn't in that window — even one with hundreds of commits earlier in the
+  // year — instead of just trimming older commits as the `since` filter implies.
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
   const sinceIso = oneYearAgo.toISOString();
-  const activeRepos = reposToProcess.slice(0, 6);
   let totalCommits = 0;
 
-  for (const repo of activeRepos) {
+  for (const repo of reposToProcess) {
     try {
       const commitsRes = await fetch(
         `https://api.github.com/repos/${username}/${repo.name}/commits?author=${username}&since=${sinceIso}&per_page=100`,
