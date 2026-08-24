@@ -77,21 +77,21 @@ export const authOptions: AuthOptions = {
             },
           });
         } else {
-          if (user.email) {
-            dbUser = await prisma.user.findUnique({
-              where: { email: user.email },
-            });
-          }
-
-          if (!dbUser) {
-            dbUser = await prisma.user.create({
-              data: {
-                email: user.email || null,
-                name: user.name,
-                image: user.image,
-              },
-            });
-          }
+          // Deliberately do NOT look up an existing User by email here. Linking a
+          // new OAuth account to an existing user based on email match is the
+          // "dangerous email account linking" behavior NextAuth opts out of by
+          // default — an email that gets reassigned/recycled on the provider's
+          // side would let its new owner sign in and inherit the original
+          // account's session. Always create a fresh user when no Account row
+          // matches; the email's unique constraint makes this fail closed
+          // (sign-in is denied, not silently merged) if it were ever to collide.
+          dbUser = await prisma.user.create({
+            data: {
+              email: user.email || null,
+              name: user.name,
+              image: user.image,
+            },
+          });
         }
 
         await prisma.account.upsert({
