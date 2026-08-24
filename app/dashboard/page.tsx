@@ -49,8 +49,11 @@ export default async function DashboardPage() {
         <h2 className="text-[22px] font-semibold tracking-tight mb-2">
           Connect your GitHub account
         </h2>
-        <p className="text-[13px] text-muted-foreground mb-8 leading-relaxed">
+        <p className="text-[13px] text-muted-foreground mb-2 leading-relaxed">
           DevTrack AI needs to sync your public repositories, languages, and commit activities to build your developer portfolio charts and run AI audits.
+        </p>
+        <p className="text-[11px] text-text-dim mb-8 leading-relaxed">
+          Only repositories you personally own are synced — not organization repos or ones you collaborate on — and commit activity only counts commits attributed to this GitHub account&apos;s linked email.
         </p>
         <OnboardingSync />
       </div>
