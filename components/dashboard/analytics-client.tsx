@@ -52,24 +52,40 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
     .filter((r) => r.stars > 0);
 
   const today = new Date();
-  const days: { date: string; count: number }[] = [];
   const dailyCommits = analytics?.dailyContributions || {};
 
-  for (let i = 364; i >= 0; i--) {
-    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+  // Build a calendar-aligned grid so each row is always the same real weekday
+  // (Mon..Sun), matching the hardcoded row labels below. Raw 7-day chunks
+  // from "364 days ago" only line up with those labels when today itself
+  // happens to be a Monday, so we pad the start with blank cells back to the
+  // most recent Monday and pad the end forward to the next Sunday instead.
+  type Cell = { date: string; count: number } | null;
+  const TOTAL_DAYS = 365;
+  const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - (TOTAL_DAYS - 1));
+  const leadingBlanks = (startDate.getDay() + 6) % 7; // Mon=0 .. Sun=6
+
+  const cells: Cell[] = Array(leadingBlanks).fill(null);
+  for (let i = 0; i < TOTAL_DAYS; i++) {
+    const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + i);
     const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    days.push({ date: dateStr, count: dailyCommits[dateStr] || 0 });
+    cells.push({ date: dateStr, count: dailyCommits[dateStr] || 0 });
   }
+  const trailingBlanks = (7 - (cells.length % 7)) % 7;
+  cells.push(...Array(trailingBlanks).fill(null));
 
   const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const weeks: { date: string; count: number }[][] = [];
-  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
+  const weeks: Cell[][] = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
+  const weekMonth = (week: Cell[]): number | null => {
+    const cell = week.find((c) => c !== null);
+    return cell ? Number(cell.date.split("-")[1]) - 1 : null;
+  };
   const weekMonthLabels: (string | null)[] = weeks.map((week, idx) => {
-    const firstDay = new Date(week[0].date);
-    if (idx === 0) return MONTH_NAMES[firstDay.getMonth()];
-    const prevFirstDay = new Date(weeks[idx - 1][0].date);
-    return firstDay.getMonth() !== prevFirstDay.getMonth() ? MONTH_NAMES[firstDay.getMonth()] : null;
+    const month = weekMonth(week);
+    if (month === null) return null;
+    const prevMonth = idx > 0 ? weekMonth(weeks[idx - 1]) : null;
+    return month !== prevMonth ? MONTH_NAMES[month] : null;
   });
 
   const getHeatColor = (count: number) => {
@@ -138,13 +154,17 @@ export function AnalyticsClient({ analytics, repos }: AnalyticsClientProps) {
                   <span className="h-3.5 text-[9px] text-text-muted-custom font-medium leading-none whitespace-nowrap">
                     {weekMonthLabels[weekIdx] ?? ""}
                   </span>
-                  {week.map((day, dayIdx) => (
-                    <div
-                      key={dayIdx}
-                      className={`w-2.5 h-2.5 rounded-sm transition-all hover:scale-125 ${getHeatColor(day.count)}`}
-                      title={`${day.date}: ${day.count} commit${day.count !== 1 ? "s" : ""}`}
-                    />
-                  ))}
+                  {week.map((day, dayIdx) =>
+                    day ? (
+                      <div
+                        key={dayIdx}
+                        className={`w-2.5 h-2.5 rounded-sm transition-all hover:scale-125 ${getHeatColor(day.count)}`}
+                        title={`${day.date}: ${day.count} commit${day.count !== 1 ? "s" : ""}`}
+                      />
+                    ) : (
+                      <div key={dayIdx} className="w-2.5 h-2.5" />
+                    )
+                  )}
                 </div>
               ))}
             </div>
